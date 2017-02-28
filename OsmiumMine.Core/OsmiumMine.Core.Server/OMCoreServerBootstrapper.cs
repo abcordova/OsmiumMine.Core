@@ -19,6 +19,7 @@ namespace OsmiumMine.Core.Server
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
             OMConfiguration.ConnectOsmiumMine();
+            OMConfiguration.UpdateKeyCache();
 
             // Enable authentication
             StatelessAuthentication.Enable(pipelines, new StatelessAuthenticationConfiguration(ctx =>

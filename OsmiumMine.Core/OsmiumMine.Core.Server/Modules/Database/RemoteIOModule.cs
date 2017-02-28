@@ -17,6 +17,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
         public RemoteIOModule(IOMCoreServerConfiguration omConfiguration) : base("/io")
         {
             OMServerConfiguration = omConfiguration;
+
             var pathRoutes = new[] { @"^(?:(?<dbid>[\w]+)\/(?<path>.*?)(?=\.json))" };
             foreach (var pathRoute in pathRoutes)
             {

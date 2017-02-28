@@ -1,5 +1,8 @@
 ﻿using Nancy;
 using OsmiumMine.Core.Server.Configuration;
+using OsmiumMine.Core.Server.Configuration.Access;
+using OsmiumMine.Core.Server.Services.Authentication;
+using OsmiumMine.Core.Server.Services.Authentication.Security;
 using OsmiumMine.Core.Services.DynDatabase.Access;
 using OsmiumMine.Core.Services.Security;
 using System.Threading.Tasks;
@@ -13,6 +16,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
         public RemoteSecurityModule(IOMCoreServerConfiguration omConfiguration) : base("/rsec")
         {
             OMServerConfiguration = omConfiguration;
+
+            var accessValidator = new ClientApiAccessValidator();
+            this.RequiresAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
+                ApiAccessScope.Admin
+            }), accessValidator.GetAccessClaim(ApiAccessScope.Admin));
 
             // Security setup
             Post("/addrule/{dbid}", HandleAddRuleRequestAsync);
