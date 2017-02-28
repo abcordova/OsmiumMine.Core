@@ -38,7 +38,7 @@ namespace OsmiumMine.Core.Server
             config.Bind(serverParams);
             var appConfig = OMServerConfigurator.GetConfiguration(serverParams);
 
-            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OsmiumMineCoreServerBootstrapper(appConfig)));
+            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OMCoreServerBootstrapper(appConfig)));
         }
     }
 }
