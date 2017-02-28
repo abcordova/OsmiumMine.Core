@@ -33,10 +33,10 @@ namespace OsmiumMine.Core.Server.Modules.Management
             Get("/rules/list/{dbid}", HandleGetRuleListRequestAsync);
         }
 
-        private static (string, string) ParseRequestArgs(dynamic args)
+        private static (string, string) ParseRequestArgs(dynamic args, Request request)
         {
             var dbid = (string)args.dbid;
-            var path = (string)args.path;
+            var path = (string)request.Query.path;
             if (string.IsNullOrWhiteSpace(dbid)) dbid = null;
             if (string.IsNullOrWhiteSpace(path)) path = WildcardMatcher.ToRegex("/*");
             try
@@ -55,7 +55,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args);
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
@@ -74,7 +74,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args);
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var matchingRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
                 return Response.AsJsonNet(matchingRules);
@@ -85,7 +85,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args);
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 DatabaseAction ruleFlags = 0;
                 try
