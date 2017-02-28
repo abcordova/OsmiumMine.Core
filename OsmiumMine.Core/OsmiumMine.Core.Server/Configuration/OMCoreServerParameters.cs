@@ -4,6 +4,9 @@ using OsmiumMine.Core.Server.Configuration.Access;
 
 namespace OsmiumMine.Core.Server.Configuration
 {
+    /// <summary>
+    /// Parameter model used to set up OMCoreServerConfiguration
+    /// </summary>
     public class OMCoreServerParameters
     {
         [JsonProperty("omconfig")]

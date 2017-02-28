@@ -15,7 +15,9 @@ namespace OsmiumMine.Core.Server
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                              .AddJsonFile("omserver.json", true)
+                              .AddJsonFile("omserver.json",
+                                optional: true,
+                                reloadOnChange: true)
                               .SetBasePath(env.ContentRootPath);
 
             config = builder.Build();
