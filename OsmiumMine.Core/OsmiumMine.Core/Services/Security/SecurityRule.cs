@@ -1,4 +1,5 @@
-﻿using OsmiumMine.Core.Services.DynDatabase.Access;
+﻿using Newtonsoft.Json;
+using OsmiumMine.Core.Services.DynDatabase.Access;
 using OsmiumMine.Core.Utilities;
 using System.Text.RegularExpressions;
 
@@ -15,10 +16,13 @@ namespace OsmiumMine.Core.Services.Security
         /// <summary>
         /// Compiled path regex
         /// </summary>
+        [JsonProperty("pathRegex")]
         public Regex PathRegex { get; private set; }
 
+        [JsonProperty("allowedActions")]
         public DatabaseAction AllowedActions { get; set; }
 
+        [JsonProperty("priority")]
         public int Priority { get; }
 
         protected SecurityRule(Regex regex, DatabaseAction allowedActions)
