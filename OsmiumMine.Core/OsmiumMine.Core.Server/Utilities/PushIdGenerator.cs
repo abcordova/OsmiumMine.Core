@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OsmiumMine.Core.Utilities
+namespace OsmiumMine.Core.Server.Utilities
 {
     /// <summary>
     /// Thank you https://gist.github.com/kiliman/ca1d9f4135078a6b24c5005113bbeea4!

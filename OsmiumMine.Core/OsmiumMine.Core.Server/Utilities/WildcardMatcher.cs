@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace OsmiumMine.Core.Utilities
+namespace OsmiumMine.Core.Server.Utilities
 {
     public class WildcardMatcher
     {

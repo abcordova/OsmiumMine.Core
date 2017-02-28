@@ -1,7 +1,7 @@
 ﻿using Nancy;
 using Newtonsoft.Json;
 
-namespace OsmiumMine.Core.Utilities
+namespace OsmiumMine.Core.Server.Utilities
 {
     public static class JsonNetResponseSerializerExtension
     {

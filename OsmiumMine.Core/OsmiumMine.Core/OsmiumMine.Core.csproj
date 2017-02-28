@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StackExchange.Redis" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\IridiumIon.JsonFlat3\IridiumIon.JsonFlat3.csproj" />
   </ItemGroup>
 
