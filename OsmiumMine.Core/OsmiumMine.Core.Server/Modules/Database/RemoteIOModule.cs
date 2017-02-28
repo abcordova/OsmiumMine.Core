@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OsmiumMine.Core.Server.Modules.Database
 {
-    public class RemoteIOModule : NancyModule
+    public class RemoteIOModule : OsmiumMineServerModule
     {
         public IOMCoreServerConfiguration OMServerConfiguration { get; set; }
 
