@@ -96,7 +96,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 DatabaseAction ruleFlags = 0;
                 try
                 {
-                    var ruleTypes = ((string)args.type).Split('|').Select(x => (DatabaseAction)Enum.Parse(typeof(DatabaseAction), x));
+                    var ruleTypes = ((string)Request.Query.type).Split('|').Select(x => (DatabaseAction)Enum.Parse(typeof(DatabaseAction), x));
                     foreach (var ruleType in ruleTypes)
                     {
                         ruleFlags |= ruleType;
