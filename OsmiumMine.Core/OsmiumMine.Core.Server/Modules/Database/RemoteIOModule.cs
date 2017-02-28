@@ -1,6 +1,7 @@
 ﻿using Nancy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OsmiumMine.Core.Server.Configuration;
 using OsmiumMine.Core.Server.Utilities;
 using OsmiumMine.Core.Services.DynDatabase;
 using OsmiumMine.Core.Services.DynDatabase.Access;
@@ -12,8 +13,11 @@ namespace OsmiumMine.Core.Server.Modules.Database
 {
     public class RemoteIOModule : NancyModule
     {
-        public RemoteIOModule() : base("/io")
+        public IOMCoreServerConfiguration OMServerConfiguration { get; set; }
+
+        public RemoteIOModule(IOMCoreServerConfiguration omConfiguration) : base("/io")
         {
+            OMServerConfiguration = omConfiguration;
             var pathRoutes = new[] { @"^(?:(?<dbid>[\w]+)\/(?<path>.*?)(?=\.json))" };
             foreach (var pathRoute in pathRoutes)
             {
@@ -56,18 +60,18 @@ namespace OsmiumMine.Core.Server.Modules.Database
             return await Task.Run(() =>
             {
                 var dbid = (string)args.dbid;
-                if (!OsmiumMineCoreServerRegistry.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OsmiumMineCoreServerRegistry.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                OsmiumMineCoreServerRegistry.OMContext.Configuration.SecurityRuleTable[dbid].Add(SecurityRule.FromWildcard("/*", DatabaseAction.All));
+                OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Add(SecurityRule.FromWildcard("/*", DatabaseAction.All));
                 return HttpStatusCode.OK;
             });
         }
 
         private async Task<Response> HandlePutData(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OsmiumMineCoreServerRegistry.OMContext);
+            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Put);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -88,7 +92,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             }
 
             // Write data
-            var dynDbService = new DynamicDatabaseService(OsmiumMineCoreServerRegistry.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
             var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest.DatabaseId, dbRequest.Path, NodeDataOvewriteMode.Put);
 
             // Return data written
@@ -97,7 +101,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePatchData(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OsmiumMineCoreServerRegistry.OMContext);
+            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Update);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -117,7 +121,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             }
 
             // Write data
-            var dynDbService = new DynamicDatabaseService(OsmiumMineCoreServerRegistry.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
             var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest.DatabaseId, dbRequest.Path, NodeDataOvewriteMode.Update);
 
             // Return data written
@@ -126,7 +130,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePostData(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OsmiumMineCoreServerRegistry.OMContext);
+            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Push);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -146,7 +150,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             }
 
             // Write data
-            var dynDbService = new DynamicDatabaseService(OsmiumMineCoreServerRegistry.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
             var pushId = await dynDbService.PlaceData(dataBundle, dbRequest.DatabaseId, dbRequest.Path, NodeDataOvewriteMode.Push);
 
             // Return data written
@@ -155,11 +159,11 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandleDeleteData(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OsmiumMineCoreServerRegistry.OMContext);
+            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Delete);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
-            var dynDbService = new DynamicDatabaseService(OsmiumMineCoreServerRegistry.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
             await dynDbService.DeleteData(dbRequest.DatabaseId, dbRequest.Path);
 
             return Response.FromJsonString(new JObject().ToString());
@@ -167,13 +171,13 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandleGetData(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OsmiumMineCoreServerRegistry.OMContext);
+            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Retreive);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Read query parameters
             var shallow = (string)Request.Query.shallow == "true";
-            var dynDbService = new DynamicDatabaseService(OsmiumMineCoreServerRegistry.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
             var dataBundle = await dynDbService.GetData(dbRequest.DatabaseId, dbRequest.Path, shallow);
 
             if (dataBundle == null)

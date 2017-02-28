@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nancy.Owin;
-using OsmiumMine.Core.Server.Hosting;
+using OsmiumMine.Core.Server.Configuration;
 
 namespace OsmiumMine.Core.Server
 {
@@ -30,7 +30,7 @@ namespace OsmiumMine.Core.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            var appConfig = OsmiumMineCoreServerConfigurator.GetConfiguration();
+            var appConfig = OMServerConfigurator.GetConfiguration();
             config.Bind(appConfig);
 
             app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OsmiumMineCoreServerBootstrapper(appConfig)));

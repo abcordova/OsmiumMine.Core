@@ -1,15 +1,24 @@
 ﻿using Nancy;
-using OsmiumMine.Core.Configuration;
+using Nancy.Bootstrapper;
+using Nancy.TinyIoc;
+using OsmiumMine.Core.Server.Configuration;
 
 namespace OsmiumMine.Core.Server
 {
     public class OsmiumMineCoreServerBootstrapper : DefaultNancyBootstrapper
     {
-        public OsmiumMineConfiguration Configuration { get; set; }
+        public OMCoreServerConfiguration Configuration { get; set; }
 
-        public OsmiumMineCoreServerBootstrapper(OsmiumMineConfiguration configuration)
+        public OsmiumMineCoreServerBootstrapper(OMCoreServerConfiguration configuration)
         {
             Configuration = configuration;
+        }
+
+        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        {
+            Configuration.ConnectOsmiumMine();
+
+            base.ApplicationStartup(container, pipelines);
         }
     }
 }
