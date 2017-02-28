@@ -11,16 +11,16 @@ namespace OsmiumMine.Core.Services.DynDatabase
 {
     public class DynamicDatabaseService
     {
-        public KeyValueDatabaseService DatabaseService { get; set; }
+        public KeyValueDatabaseService KeyValueDatabase { get; set; }
 
-        public DynamicDatabaseService(KeyValueDatabaseService databaseService)
+        public DynamicDatabaseService(KeyValueDatabaseService keyValueDatabase)
         {
-            DatabaseService = databaseService;
+            KeyValueDatabase = keyValueDatabase;
         }
 
         public async Task<string> PlaceData(JObject dataBundleRoot, string subDatabaseId, string path, NodeDataOvewriteMode ovewriteMode, bool response = true)
         {
-            var domain = DatabaseService.GetDomainPath(subDatabaseId);
+            var domain = KeyValueDatabase.GetDomainPath(subDatabaseId);
             string result = null; // Optionally used to return a result
             var dataPath = new FlatJsonPath(path);
             await Task.Run(() =>
@@ -50,7 +50,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             // Merge input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
-                                DatabaseService.Store.Set(domain, kvp.Key, kvp.Value);
+                                KeyValueDatabase.Store.Set(domain, kvp.Key, kvp.Value);
                             }
                         }
 
@@ -62,16 +62,16 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             var dataTokenPrefix = dataPath.TokenPrefix;
                             // Get existing data
                             var flattenedBundle = new FlatJsonObject(dataBundleRoot, dataTokenPrefix);
-                            var existingData = DatabaseService.Store.GetKeys(domain).Where(x => x.StartsWith(dataTokenPrefix, StringComparison.Ordinal));
+                            var existingData = KeyValueDatabase.Store.GetKeys(domain).Where(x => x.StartsWith(dataTokenPrefix, StringComparison.Ordinal));
                             // Remove existing data
                             foreach (var key in existingData)
                             {
-                                DatabaseService.Store.Delete(domain, key);
+                                KeyValueDatabase.Store.Delete(domain, key);
                             }
                             // Add input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
-                                DatabaseService.Store.Set(domain, kvp.Key, kvp.Value);
+                                KeyValueDatabase.Store.Set(domain, kvp.Key, kvp.Value);
                             }
                         }
                         break;
@@ -87,7 +87,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             // Merge input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
-                                DatabaseService.Store.Set(domain, kvp.Key, kvp.Value);
+                                KeyValueDatabase.Store.Set(domain, kvp.Key, kvp.Value);
                             }
                         }
                         break;
@@ -101,33 +101,33 @@ namespace OsmiumMine.Core.Services.DynDatabase
 
         public async Task DeleteData(string subDatabaseId, string path)
         {
-            var domain = DatabaseService.GetDomainPath(subDatabaseId);
+            var domain = KeyValueDatabase.GetDomainPath(subDatabaseId);
             var dataPath = new FlatJsonPath(path);
             await Task.Run(() =>
             {
                 // Get existing data
-                var existingData = DatabaseService.Store.GetKeys(domain).Where(x => x.StartsWith(dataPath.TokenPrefix, StringComparison.Ordinal));
+                var existingData = KeyValueDatabase.Store.GetKeys(domain).Where(x => x.StartsWith(dataPath.TokenPrefix, StringComparison.Ordinal));
                 // Remove existing data
                 foreach (var key in existingData)
                 {
-                    DatabaseService.Store.Delete(domain, key);
+                    KeyValueDatabase.Store.Delete(domain, key);
                 }
             });
         }
 
         public async Task<JToken> GetData(string subDatabaseId, string path, bool shallow = false)
         {
-            var domain = DatabaseService.GetDomainPath(subDatabaseId);
+            var domain = KeyValueDatabase.GetDomainPath(subDatabaseId);
             var dataPath = new FlatJsonPath(path);
             return await Task.Run(() =>
             {
-                if (!DatabaseService.Store.Exists(domain)) return null; // 404 - There's no data container
+                if (!KeyValueDatabase.Store.Exists(domain)) return null; // 404 - There's no data container
                 // Unflatten and retrieve JSON object
                 var flatJsonDict = new Dictionary<string, string>();
                 // Use an optimization to only fetch requested keys
-                foreach (var key in DatabaseService.Store.GetKeysEnumerable(domain).Where(x => x.StartsWith(dataPath.TokenPrefix, StringComparison.Ordinal)))
+                foreach (var key in KeyValueDatabase.Store.GetKeysEnumerable(domain).Where(x => x.StartsWith(dataPath.TokenPrefix, StringComparison.Ordinal)))
                 {
-                    var val = DatabaseService.Store.Get(domain, key);
+                    var val = KeyValueDatabase.Store.Get(domain, key);
                     flatJsonDict.Add(key, val);
                 }
                 var unflattenedJObj = new FlatJsonObject(flatJsonDict).Unflatten();
