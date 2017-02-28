@@ -33,26 +33,32 @@ namespace OsmiumMine.Core.Server.Modules.Management
             Get("/rules/list/{dbid}", HandleGetRuleListRequestAsync);
         }
 
-        private static (string, string) ParseRequestArgs(dynamic args, Request request)
+        private static (string, string) ParseRequestArgs(dynamic args, Request request, bool parsePathPattern = true)
         {
             var dbid = (string)args.dbid;
             var path = (string)request.Query.path;
             var wc = (string)request.Query.wc == "1"; // whether to parse as a wildcard
             if (string.IsNullOrWhiteSpace(dbid)) dbid = null;
-            if (string.IsNullOrWhiteSpace(path)) path = WildcardMatcher.ToRegex("/*");
+            if (string.IsNullOrWhiteSpace(path)) path = parsePathPattern ? WildcardMatcher.ToRegex("/*") : "/";
             if (wc)
             {
                 // convert wildcard to regex
                 path = WildcardMatcher.ToRegex(path);
             }
-            try
+            else
             {
-                Regex.IsMatch("", path);
-            }
-            catch
-            {
-                // Path regex was invalid, parse as wildcard
-                path = WildcardMatcher.ToRegex(path);
+                if (parsePathPattern)
+                {
+                    try
+                    {
+                        Regex.IsMatch("", path);
+                    }
+                    catch
+                    {
+                        // Path regex was invalid, parse as wildcard
+                        path = WildcardMatcher.ToRegex(path);
+                    }
+                }
             }
             return (dbid, path);
         }
@@ -61,7 +67,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
                 {
@@ -84,7 +90,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
                 {
