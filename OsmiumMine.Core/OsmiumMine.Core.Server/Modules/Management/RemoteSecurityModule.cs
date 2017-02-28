@@ -63,6 +63,10 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                {
+                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                }
                 var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 foreach (var dbRule in dbRules)
@@ -82,6 +86,10 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                {
+                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                }
                 var matchingRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
                 return Response.AsJsonNet(matchingRules);
             });
