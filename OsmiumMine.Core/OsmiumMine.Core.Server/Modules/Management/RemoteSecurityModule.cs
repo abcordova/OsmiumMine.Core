@@ -30,6 +30,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             // Security setup
             Post("/rules/create/{dbid}", HandleCreateRuleRequestAsync);
             Delete("/rules/clear/{dbid}", HandleClearRulesRequestAsync);
+            Get("/rules/list/{dbid}", HandleGetRuleListRequestAsync);
         }
 
         private static (string, string) ParseRequestArgs(dynamic args)
@@ -69,7 +70,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             });
         }
 
-        private async Task<Response> GetRuleListRequestAsync(dynamic args)
+        private async Task<Response> HandleGetRuleListRequestAsync(dynamic args)
         {
             return await Task.Run(() =>
             {
