@@ -5,13 +5,13 @@ namespace OsmiumMine.Core.Services.Database
     public class KeyValueDatabaseService
     {
         public OsmiumMineContext Context { get; set; }
+        public IKeyValueDatabase Store { get; }
 
         public KeyValueDatabaseService(OsmiumMineContext context)
         {
             Context = context;
+            Store = new RedisDatabase(Context.Configuration.RedisConnectionString);
         }
-
-        public IKeyValueDatabase Store { get; } = new RedisDatabase();
 
         /// <summary>
         /// Gets the data store prefix key

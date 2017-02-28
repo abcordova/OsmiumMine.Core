@@ -10,9 +10,9 @@ namespace OsmiumMine.Core.Services.Database.Redis
         private ConnectionMultiplexer _redis;
         private IDatabase _rdb => _redis.GetDatabase();
 
-        public RedisDatabase()
+        public RedisDatabase(string connectionString)
         {
-            _redis = ConnectionMultiplexer.Connect(OsmiumMine.CoreRegistry.Instance.Configuration.RedisConnectionString);
+            _redis = ConnectionMultiplexer.Connect(connectionString);
         }
 
         public bool Exists(string key)
