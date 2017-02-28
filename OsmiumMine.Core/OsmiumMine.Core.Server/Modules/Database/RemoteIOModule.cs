@@ -5,7 +5,6 @@ using OsmiumMine.Core.Server.Configuration;
 using OsmiumMine.Core.Server.Utilities;
 using OsmiumMine.Core.Services.DynDatabase;
 using OsmiumMine.Core.Services.DynDatabase.Access;
-using OsmiumMine.Core.Services.Security;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -27,9 +26,6 @@ namespace OsmiumMine.Core.Server.Modules.Database
                 Delete(pathRoute, HandleDeleteData);
                 Get(pathRoute, HandleGetData);
             }
-
-            // Security setup
-            Post("/addrule/{dbid}", HandleAddRuleRequest);
 
             // Do some initial setup
             Before += ctx =>
@@ -53,20 +49,6 @@ namespace OsmiumMine.Core.Server.Modules.Database
                         break;
                 }
             };
-        }
-
-        private async Task<Response> HandleAddRuleRequest(dynamic args)
-        {
-            return await Task.Run(() =>
-            {
-                var dbid = (string)args.dbid;
-                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
-                {
-                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
-                }
-                OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Add(SecurityRule.FromWildcard("/*", DatabaseAction.All));
-                return HttpStatusCode.OK;
-            });
         }
 
         private async Task<Response> HandlePutData(dynamic args)
