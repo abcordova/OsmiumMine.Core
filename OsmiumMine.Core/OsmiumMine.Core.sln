@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmiumMine.Core", "OsmiumMi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsmiumMine.Core.Server", "OsmiumMine.Core.Server\OsmiumMine.Core.Server.csproj", "{823AFDD9-79DE-4A2B-A184-10F98547C70C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D0BF3BEE-7FF1-435E-B3F3-978AACD99584}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IridiumIon.JsonFlat3", "IridiumIon.JsonFlat3\IridiumIon.JsonFlat3.csproj", "{3B12EF69-4587-43A2-9003-356E17D075AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,8 +45,23 @@ Global
 		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x64.Build.0 = Release|x64
 		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x86.ActiveCfg = Release|x86
 		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x86.Build.0 = Release|x86
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|x64.ActiveCfg = Debug|x64
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|x64.Build.0 = Debug|x64
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|x86.ActiveCfg = Debug|x86
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|x86.Build.0 = Debug|x86
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|x64.ActiveCfg = Release|x64
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|x64.Build.0 = Release|x64
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|x86.ActiveCfg = Release|x86
+		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3B12EF69-4587-43A2-9003-356E17D075AF} = {D0BF3BEE-7FF1-435E-B3F3-978AACD99584}
 	EndGlobalSection
 EndGlobal
