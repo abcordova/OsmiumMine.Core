@@ -1,4 +1,5 @@
 ﻿using OsmiumMine.Core.Server.Configuration;
+using System.Linq;
 using System.Security.Claims;
 
 namespace OsmiumMine.Core.Server.Services.Authentication
@@ -14,7 +15,7 @@ namespace OsmiumMine.Core.Server.Services.Authentication
 
         public ClaimsPrincipal ResolveClientIdentity(string apiKey)
         {
-            var currentKey = Configuration.KeyCache.FindKeyByKeyString(apiKey);
+            var currentKey = Configuration.Parameters.ApiKeys.FirstOrDefault(x => x.Key == apiKey);
             if (currentKey != null)
             {
                 // Give client identity
