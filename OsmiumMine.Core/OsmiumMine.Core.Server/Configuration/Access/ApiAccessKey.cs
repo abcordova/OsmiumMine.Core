@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace OsmiumMine.Core.Server.Configuration.Access
 {
@@ -8,8 +9,13 @@ namespace OsmiumMine.Core.Server.Configuration.Access
     public enum ApiAccessScope
     {
         // General
+        [EnumMember(Value = "read")]
         Read,
+
+        [EnumMember(Value = "write")]
         Write,
+
+        [EnumMember(Value = "admin")]
         Admin,
 
         // Types of data
@@ -20,7 +26,7 @@ namespace OsmiumMine.Core.Server.Configuration.Access
         [JsonProperty("key")]
         public string Key { get; set; }
 
-        [JsonProperty("scopes")]
+        [JsonProperty("accessScopes")]
         public ApiAccessScope[] AccessScopes { get; set; } = new[] { ApiAccessScope.Read };
     }
 }
