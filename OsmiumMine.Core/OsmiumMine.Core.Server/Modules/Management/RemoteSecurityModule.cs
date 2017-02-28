@@ -37,8 +37,14 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             var dbid = (string)args.dbid;
             var path = (string)request.Query.path;
+            var wc = (string)request.Query.wc == "1"; // whether to parse as a wildcard
             if (string.IsNullOrWhiteSpace(dbid)) dbid = null;
             if (string.IsNullOrWhiteSpace(path)) path = WildcardMatcher.ToRegex("/*");
+            if (wc)
+            {
+                // convert wildcard to regex
+                path = WildcardMatcher.ToRegex(path);
+            }
             try
             {
                 Regex.IsMatch("", path);
