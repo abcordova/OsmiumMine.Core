@@ -4,26 +4,33 @@ namespace OsmiumMine.Core.Services.Database
 {
     public class KeyValueDatabaseService
     {
-        public static IKeyValueDatabase Store { get; } = new RedisDatabase();
+        public OsmiumMineContext Context { get; set; }
+
+        public KeyValueDatabaseService(OsmiumMineContext context)
+        {
+            Context = context;
+        }
+
+        public IKeyValueDatabase Store { get; } = new RedisDatabase();
 
         /// <summary>
         /// Gets the data store prefix key
         /// </summary>
         /// <param name="subDatabaseId"></param>
         /// <returns></returns>
-        public static string GetDSPrefixKey(string subDatabaseId, bool includeSuffix = true)
+        public string GetDSPrefixKey(string subDatabaseId, bool includeSuffix = true)
         {
-            return $"{OsmiumMine.CoreRegistry.Instance.Configuration.RedisPrefix + subDatabaseId}" + (includeSuffix ? "." : "");
+            return $"{Context.Configuration.RedisPrefix + subDatabaseId}" + (includeSuffix ? "." : "");
         }
 
-        public static string GetDomainPath(string domain)
+        public string GetDomainPath(string domain)
         {
-            return $"{OsmiumMine.CoreRegistry.Instance.Configuration.RedisPrefix + domain}";
+            return $"{Context.Configuration.RedisPrefix + domain}";
         }
 
-        public static string GetDomainSuffix(string domain)
+        public string GetDomainSuffix(string domain)
         {
-            return $"{OsmiumMine.CoreRegistry.Instance.Configuration.RedisPrefix + domain}.";
+            return $"{Context.Configuration.RedisPrefix + domain}.";
         }
     }
 }

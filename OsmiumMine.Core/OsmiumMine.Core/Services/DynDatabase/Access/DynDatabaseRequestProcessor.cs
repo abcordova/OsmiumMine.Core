@@ -1,8 +1,15 @@
 ﻿namespace OsmiumMine.Core.Services.DynDatabase.Access
 {
-    public static class DynDatabaseRequestProcessor
+    public class DynDatabaseRequestProcessor
     {
-        public static DynDatabaseRequest Process(dynamic args, DatabaseAction dbAction)
+        public OsmiumMineContext Context { get; set; }
+
+        public DynDatabaseRequestProcessor(OsmiumMineContext context)
+        {
+            Context = context;
+        }
+
+        public DynDatabaseRequest Process(dynamic args, DatabaseAction dbAction)
         {
             // Read basic parameters
             var path = (string)args.path ?? ""; // null paths aren't valid
@@ -18,10 +25,10 @@
             };
             // TODO: Check permissions
             dbRequest.PermissionState = PermissionState.Denied;
-            if (OsmiumMine.CoreRegistry.Instance.Configuration.SecurityRuleTable.ContainsKey(databaseId))
+            if (Context.Configuration.SecurityRuleTable.ContainsKey(databaseId))
             {
                 // Rules are sorted in ascending priority order
-                foreach (var rule in OsmiumMine.CoreRegistry.Instance.Configuration.SecurityRuleTable[databaseId])
+                foreach (var rule in Context.Configuration.SecurityRuleTable[databaseId])
                 {
                     if (rule.PathRegex.Match($"/{path}").Success)
                     {
