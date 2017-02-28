@@ -6,6 +6,6 @@ namespace OsmiumMine.Core.Server.Configuration
     public class OMCoreServerParameters
     {
         [JsonProperty("omconfig")]
-        public OsmiumMineConfiguration OsmiumMineConfiguration { get; set; }
+        public OsmiumMineConfiguration OsmiumMineConfiguration { get; set; } = new OsmiumMineConfiguration();
     }
 }
