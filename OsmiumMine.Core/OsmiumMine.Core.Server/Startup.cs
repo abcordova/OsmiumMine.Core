@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nancy.Owin;
 using OsmiumMine.Core.Configuration;
@@ -23,6 +24,11 @@ namespace OsmiumMine.Core.Server
             config = builder.Build();
         }
 
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.Configure<OMCoreServerParameters>(config);
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -33,12 +39,12 @@ namespace OsmiumMine.Core.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            var serverParams = new OMCoreServerParameters
+            var serverParameters = new OMCoreServerParameters
             {
-                OsmiumMineConfiguration = new OsmiumMineConfiguration()
+                OMConfig = new OsmiumMineConfiguration()
             };
-            config.Bind(serverParams);
-            var appConfig = OMServerConfigurator.GetConfiguration(serverParams);
+            config.Bind(serverParameters);
+            var appConfig = OMServerConfigurator.GetConfiguration(serverParameters);
 
             app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OMCoreServerBootstrapper(appConfig)));
         }

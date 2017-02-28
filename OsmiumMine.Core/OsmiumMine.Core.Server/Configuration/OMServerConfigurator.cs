@@ -9,7 +9,7 @@
             {
                 OMContext = new OsmiumMineContext()
                 {
-                    Configuration = parameters.OsmiumMineConfiguration
+                    Configuration = parameters.OMConfig
                 }
             };
             return config;

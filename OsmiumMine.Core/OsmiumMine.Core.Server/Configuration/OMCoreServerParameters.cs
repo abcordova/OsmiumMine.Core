@@ -10,7 +10,7 @@ namespace OsmiumMine.Core.Server.Configuration
     public class OMCoreServerParameters
     {
         [JsonProperty("omconfig")]
-        public OsmiumMineConfiguration OsmiumMineConfiguration { get; set; } = new OsmiumMineConfiguration();
+        public OsmiumMineConfiguration OMConfig { get; set; } = new OsmiumMineConfiguration();
 
         [JsonProperty("apiKeys")]
         public ApiAccessKey[] ApiKeys { get; set; } = new ApiAccessKey[0];
