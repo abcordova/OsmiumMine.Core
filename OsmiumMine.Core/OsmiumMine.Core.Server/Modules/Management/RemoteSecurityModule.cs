@@ -32,23 +32,30 @@ namespace OsmiumMine.Core.Server.Modules.Management
             Delete("/rules/clear/{dbid}", HandleClearRulesRequestAsync);
         }
 
+        private static (string, string) ParseRequestArgs(dynamic args)
+        {
+            var dbid = (string)args.dbid;
+            var path = (string)args.path;
+            if (string.IsNullOrWhiteSpace(dbid)) dbid = null;
+            if (string.IsNullOrWhiteSpace(path)) path = WildcardMatcher.ToRegex("/*");
+            try
+            {
+                Regex.IsMatch("", path);
+            }
+            catch
+            {
+                // Path regex was invalid, parse as wildcard
+                path = WildcardMatcher.ToRegex(path);
+            }
+            return (dbid, path);
+        }
+
         private async Task<Response> HandleClearRulesRequestAsync(dynamic args)
         {
             return await Task.Run(() =>
             {
-                var dbid = (string)args.dbid;
-                var path = (string)args.path;
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (string.IsNullOrWhiteSpace(path)) path = WildcardMatcher.ToRegex("/*");
-                try
-                {
-                    Regex.IsMatch("", path);
-                }
-                catch
-                {
-                    // Path regex was invalid, parse as wildcard
-                    path = WildcardMatcher.ToRegex(path);
-                }
                 var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 foreach (var dbRule in dbRules)
@@ -66,19 +73,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                var dbid = (string)args.dbid;
-                var path = (string)args.path;
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (string.IsNullOrWhiteSpace(path)) path = WildcardMatcher.ToRegex("/*");
-                try
-                {
-                    Regex.IsMatch("", path);
-                }
-                catch
-                {
-                    // Path regex was invalid, parse as wildcard
-                    path = WildcardMatcher.ToRegex(path);
-                }
                 var matchingRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
                 return Response.AsJsonNet(matchingRules);
             });
@@ -88,19 +84,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                var dbid = (string)args.dbid;
-                var path = (string)args.path;
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (string.IsNullOrWhiteSpace(path)) path = WildcardMatcher.ToRegex("/*");
-                try
-                {
-                    Regex.IsMatch("", path);
-                }
-                catch
-                {
-                    // Path regex was invalid, parse as wildcard
-                    path = WildcardMatcher.ToRegex(path);
-                }
                 DatabaseAction ruleFlags = 0;
                 try
                 {
