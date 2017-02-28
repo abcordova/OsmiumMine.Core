@@ -7,18 +7,25 @@ namespace OsmiumMine.Core.Server
 {
     public class OsmiumMineCoreServerBootstrapper : DefaultNancyBootstrapper
     {
-        public OMCoreServerConfiguration Configuration { get; set; }
+        public OMCoreServerConfiguration OMConfiguration { get; set; }
 
         public OsmiumMineCoreServerBootstrapper(OMCoreServerConfiguration configuration)
         {
-            Configuration = configuration;
+            OMConfiguration = configuration;
         }
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            Configuration.ConnectOsmiumMine();
+            OMConfiguration.ConnectOsmiumMine();
 
             base.ApplicationStartup(container, pipelines);
+        }
+
+        protected override void ConfigureApplicationContainer(TinyIoCContainer container)
+        {
+            base.ConfigureApplicationContainer(container);
+
+            container.Register<IOMCoreServerConfiguration>(OMConfiguration);
         }
     }
 }
