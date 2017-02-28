@@ -1,4 +1,5 @@
-﻿using OsmiumMine.Core.Services.Database;
+﻿using OsmiumMine.Core.Server.Configuration.Access;
+using OsmiumMine.Core.Services.Database;
 
 namespace OsmiumMine.Core.Server.Configuration
 {
@@ -6,5 +7,6 @@ namespace OsmiumMine.Core.Server.Configuration
     {
         OsmiumMineContext OMContext { get; set; }
         KeyValueDatabaseService KeyValueDbService { get; set; }
+        ApiKeyCache KeyCache { get; set; }
     }
 }

@@ -15,10 +15,10 @@ namespace OsmiumMine.Core.Server.Modules.Management
             OMServerConfiguration = omConfiguration;
 
             // Security setup
-            Post("/addrule/{dbid}", HandleAddRuleRequest);
+            Post("/addrule/{dbid}", HandleAddRuleRequestAsync);
         }
 
-        private async Task<Response> HandleAddRuleRequest(dynamic args)
+        private async Task<Response> HandleAddRuleRequestAsync(dynamic args)
         {
             return await Task.Run(() =>
             {

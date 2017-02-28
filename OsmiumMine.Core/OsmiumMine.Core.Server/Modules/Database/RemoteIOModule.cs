@@ -20,11 +20,11 @@ namespace OsmiumMine.Core.Server.Modules.Database
             var pathRoutes = new[] { @"^(?:(?<dbid>[\w]+)\/(?<path>.*?)(?=\.json))" };
             foreach (var pathRoute in pathRoutes)
             {
-                Put(pathRoute, HandlePutData);
-                Patch(pathRoute, HandlePatchData);
-                Post(pathRoute, HandlePostData);
-                Delete(pathRoute, HandleDeleteData);
-                Get(pathRoute, HandleGetData);
+                Put(pathRoute, HandlePutDataAsync);
+                Patch(pathRoute, HandlePatchDataAsync);
+                Post(pathRoute, HandlePostDataAsync);
+                Delete(pathRoute, HandleDeleteDataAsync);
+                Get(pathRoute, HandleGetDataAsync);
             }
 
             // Do some initial setup
@@ -51,7 +51,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             };
         }
 
-        private async Task<Response> HandlePutData(dynamic args)
+        private async Task<Response> HandlePutDataAsync(dynamic args)
         {
             var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Put);
@@ -81,7 +81,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             return Response.FromJsonString(placeResult);
         }
 
-        private async Task<Response> HandlePatchData(dynamic args)
+        private async Task<Response> HandlePatchDataAsync(dynamic args)
         {
             var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Update);
@@ -110,7 +110,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             return Response.FromJsonString(placeResult);
         }
 
-        private async Task<Response> HandlePostData(dynamic args)
+        private async Task<Response> HandlePostDataAsync(dynamic args)
         {
             var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Push);
@@ -139,7 +139,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             return Response.AsJsonNet(new { name = pushId });
         }
 
-        private async Task<Response> HandleDeleteData(dynamic args)
+        private async Task<Response> HandleDeleteDataAsync(dynamic args)
         {
             var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Delete);
@@ -151,7 +151,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             return Response.FromJsonString(new JObject().ToString());
         }
 
-        private async Task<Response> HandleGetData(dynamic args)
+        private async Task<Response> HandleGetDataAsync(dynamic args)
         {
             var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Retreive);
