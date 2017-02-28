@@ -1,11 +1,11 @@
 ﻿using Nancy;
-using Nancy.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OsmiumMine.Core.Server.Utilities;
 using OsmiumMine.Core.Services.DynDatabase;
 using OsmiumMine.Core.Services.DynDatabase.Access;
 using OsmiumMine.Core.Services.Security;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace OsmiumMine.Core.Server.Modules.Database
@@ -53,13 +53,16 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandleAddRuleRequest(dynamic args)
         {
-            var dbid = (string)args.dbid;
-            if (!OsmiumMineServerRegistry.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+            return await Task.Run(() =>
             {
-                OsmiumMineServerRegistry.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
-            }
-            OsmiumMineServerRegistry.OMContext.Configuration.SecurityRuleTable[dbid].Add(SecurityRule.FromWildcard("/*", DatabaseAction.All));
-            return HttpStatusCode.OK;
+                var dbid = (string)args.dbid;
+                if (!OsmiumMineServerRegistry.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                {
+                    OsmiumMineServerRegistry.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                }
+                OsmiumMineServerRegistry.OMContext.Configuration.SecurityRuleTable[dbid].Add(SecurityRule.FromWildcard("/*", DatabaseAction.All));
+                return HttpStatusCode.OK;
+            });
         }
 
         private async Task<Response> HandlePutData(dynamic args)
@@ -73,7 +76,11 @@ namespace OsmiumMine.Core.Server.Modules.Database
             JObject dataBundle;
             try
             {
-                dataBundle = JObject.Parse(Request.Body.AsString());
+                using (var sr = new StreamReader(Request.Body))
+                {
+                    var rawJsonData = await sr.ReadToEndAsync();
+                    dataBundle = JObject.Parse(rawJsonData);
+                }
             }
             catch (JsonSerializationException)
             {
@@ -90,14 +97,19 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePatchData(dynamic args)
         {
-            var dbRequest = (DynDatabaseRequest)DynDatabaseRequestProcessor.Process(args, DatabaseAction.Update);
+            var requestProcessor = new DynDatabaseRequestProcessor(OsmiumMineServerRegistry.OMContext);
+            var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Update);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Deserialize data bundle
             JObject dataBundle;
             try
             {
-                dataBundle = JObject.Parse(Request.Body.AsString());
+                using (var sr = new StreamReader(Request.Body))
+                {
+                    var rawJsonData = await sr.ReadToEndAsync();
+                    dataBundle = JObject.Parse(rawJsonData);
+                }
             }
             catch (JsonSerializationException)
             {
@@ -122,7 +134,11 @@ namespace OsmiumMine.Core.Server.Modules.Database
             JObject dataBundle;
             try
             {
-                dataBundle = JObject.Parse(Request.Body.AsString());
+                using (var sr = new StreamReader(Request.Body))
+                {
+                    var rawJsonData = await sr.ReadToEndAsync();
+                    dataBundle = JObject.Parse(rawJsonData);
+                }
             }
             catch (JsonSerializationException)
             {
