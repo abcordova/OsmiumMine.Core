@@ -2,10 +2,17 @@
 {
     public static class OMServerConfigurator
     {
-        public static OMCoreServerConfiguration GetConfiguration()
+        public static OMCoreServerConfiguration GetConfiguration(OMCoreServerParameters serverParams)
         {
             // Load the configuration
-            return new OMCoreServerConfiguration();
+            var config = new OMCoreServerConfiguration()
+            {
+                OMContext = new OsmiumMineContext()
+                {
+                    Configuration = serverParams.OsmiumMineConfiguration
+                }
+            };
+            return config;
         }
     }
 }

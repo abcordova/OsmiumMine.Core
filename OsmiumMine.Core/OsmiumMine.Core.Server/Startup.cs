@@ -30,8 +30,9 @@ namespace OsmiumMine.Core.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            var appConfig = OMServerConfigurator.GetConfiguration();
-            config.Bind(appConfig);
+            var serverParams = new OMCoreServerParameters();
+            config.Bind(serverParams);
+            var appConfig = OMServerConfigurator.GetConfiguration(serverParams);
 
             app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OsmiumMineCoreServerBootstrapper(appConfig)));
         }
