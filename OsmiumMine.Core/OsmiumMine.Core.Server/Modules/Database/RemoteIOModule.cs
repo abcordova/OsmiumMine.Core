@@ -155,7 +155,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
         private async Task<Response> HandleGetDataAsync(dynamic args)
         {
             var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
-            var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Retreive);
+            var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Retrieve);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Read query parameters
