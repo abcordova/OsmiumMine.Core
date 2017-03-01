@@ -1,4 +1,6 @@
-﻿namespace OsmiumMine.Core.Services.DynDatabase.Access
+﻿using static OsmiumMine.Core.Services.DynDatabase.Access.DynDatabaseRequest;
+
+namespace OsmiumMine.Core.Services.DynDatabase.Access
 {
     public class RequestProcessor
     {
@@ -21,10 +23,10 @@
                 Path = path,
                 DatabaseId = databaseId,
                 Valid = databaseId != null,
-                PermissionState = PermissionState.Denied
+                State = PermissionState.Denied
             };
             // Check permissions
-            dbRequest.PermissionState = PermissionState.Denied;
+            dbRequest.State = PermissionState.Denied;
             if (Context.Configuration.SecurityRuleTable.ContainsKey(databaseId))
             {
                 // Rules are sorted in ascending priority order
@@ -34,7 +36,7 @@
                     {
                         if (rule.Actions.HasFlag(dbAction))
                         {
-                            dbRequest.PermissionState = rule.Allow ? PermissionState.Granted : PermissionState.Denied;
+                            dbRequest.State = rule.Allow ? PermissionState.Granted : PermissionState.Denied;
                             break;
                         }
                     }

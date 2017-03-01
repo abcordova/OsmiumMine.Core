@@ -7,6 +7,7 @@ using OsmiumMine.Core.Services.DynDatabase;
 using OsmiumMine.Core.Services.DynDatabase.Access;
 using System.IO;
 using System.Threading.Tasks;
+using static OsmiumMine.Core.Services.DynDatabase.Access.DynDatabaseRequest;
 using static OsmiumMine.Core.Services.DynDatabase.DynamicDatabaseService;
 
 namespace OsmiumMine.Core.Server.Modules.Database
@@ -57,7 +58,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
         {
             var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Put);
-            if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
+            if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             var path = dbRequest.Path;
             // Deserialize data bundle
@@ -87,7 +88,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
         {
             var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Update);
-            if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
+            if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Deserialize data bundle
             JObject dataBundle;
@@ -116,7 +117,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
         {
             var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Push);
-            if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
+            if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Deserialize data bundle
             JObject dataBundle;
@@ -145,7 +146,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
         {
             var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Delete);
-            if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
+            if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
             await dynDbService.DeleteData(dbRequest.DatabaseId, dbRequest.Path);
@@ -157,7 +158,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
         {
             var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Retrieve);
-            if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
+            if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Read query parameters
             var shallow = (string)Request.Query.shallow == "1";
