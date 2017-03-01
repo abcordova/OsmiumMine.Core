@@ -137,7 +137,9 @@ like this:
 - Check the corresponding security rule table for the given database
   - (Rules are sorted by priority when created)
 - Retrieve all rules matching the given path
-- Check each rule in order until one marks the request as GRANTED
+- Check each rule in order until one specifies that the request should be allowed
+  - The request is marked as GRANTED
+- If no rules match, the request is denied. If GRANTED, the request is processed by the module.
 
 Each rule can specify one or more database action to allow:
 
