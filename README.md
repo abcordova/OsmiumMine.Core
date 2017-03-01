@@ -39,11 +39,11 @@ For example, you could store this data in the database:
             },
             "bar" : {
                 "name": "LOLCODE"
-            }
+            },
             "baz" : {
                 "name": "CHEEZBURGER"
             }
-        }
+        },
         "websites": [
             {
                 "name": "GitHub",
