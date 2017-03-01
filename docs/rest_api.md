@@ -100,7 +100,8 @@ Deletes all data under the specified path.
 
 Retrieves all data under the specified path.
 Add `shallow=1` to the query string to do a shallow
-retrieve.
+retrieve. A shallow retrieve replaces all child
+value objects with `true`, but retains primitive values.
 
 #### Manipulating data
 
