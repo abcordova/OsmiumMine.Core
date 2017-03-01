@@ -1,7 +1,7 @@
 
 # OsmiumMine Core Documentation
 
-Version 0.1
+Version 0.1.1
 
 Copyright &copy; 2016-2017 Nihal Talur (0xFireball), IridiumIon Software. All Rights Reserved.
 
@@ -21,7 +21,9 @@ OsmiumMine contains the following modules:
 - **Remote IO** - For accessing (read, write, update) the dynamic database
 - **Remote Security** - For managing (adding, enumerating, removing) security rules
 
-## Routes
+## Module documentation
+
+### Routes
 
 All listed routes should be prefixed by `/om`.
 For example, a listed route `/test` would correspond
@@ -141,7 +143,9 @@ like this:
   - The request is marked as GRANTED
 - If no rules match, the request is denied. If GRANTED, the request is processed by the module.
 
-Each rule can specify one or more database action to allow:
+Each rule can specify one or more database action to allow or deny:
+
+##### Security Rule Database Actions
 
 ```csharp
 [Flags]
@@ -158,3 +162,6 @@ public enum DatabaseAction
 }
 ```
 
+### Remote Security
+
+TODO
