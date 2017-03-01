@@ -65,7 +65,7 @@ root:
             "name": "Chocolatey"
         },
         "table": {
-            name: "Tabley McTableFace"
+            "name": "Tabley McTableFace"
         }
     }
 }
