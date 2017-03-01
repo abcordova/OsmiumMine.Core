@@ -12,6 +12,10 @@ allows for multiple "domains," each of which is its own independent data context
 this project has been specially separated to allow running the core server, `AlphaOsmium.Core.Server`
 as a standalone application without AlphaOsmium.
 
+## Documentation
+
+See the `docs/` directory for REST API documentation. Language client API documentation will be available separately.
+
 ### Planned Features
 
 - Optimization/caching to further improve query performance. Most likely this will use some form of indexing to reduce reads in a property query
@@ -19,3 +23,9 @@ as a standalone application without AlphaOsmium.
 ### Extensions
 
 AlphaOsmium DbSync extends OsmiumMine by providing a real-time, event-driven data synchronization API, with support for both online and offline transactions.
+
+## License
+
+Copyright &copy; 2016-2017 Nihal Talur (0xFireball), IridiumIon Software. All Rights Reserved.
+
+Licensed under the AGPLv3.
