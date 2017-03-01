@@ -8,10 +8,11 @@
             Denied
         }
 
-        public string DatabaseId { get; set; }
-        public string Path { get; set; }
-        public bool Valid { get; set; }
-        public PermissionState State { get; set; }
+        public string DatabaseId { get; internal set; }
+        public string Path { get; internal set; }
+        public string AuthToken { get; internal set; }
+        public bool Valid { get; internal set; }
+        public PermissionState State { get; internal set; }
         public DatabaseAction RequestedAction { get; set; }
     }
 }

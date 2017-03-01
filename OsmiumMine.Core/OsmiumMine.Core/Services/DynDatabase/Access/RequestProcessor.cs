@@ -1,4 +1,5 @@
-﻿using static OsmiumMine.Core.Services.DynDatabase.Access.DynDatabaseRequest;
+﻿using System;
+using static OsmiumMine.Core.Services.DynDatabase.Access.DynDatabaseRequest;
 
 namespace OsmiumMine.Core.Services.DynDatabase.Access
 {
@@ -20,6 +21,7 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
             // Create request shell
             var dbRequest = new DynDatabaseRequest
             {
+                AuthToken = authItem,
                 Path = path,
                 DatabaseId = databaseId,
                 Valid = databaseId != null,
@@ -50,7 +52,21 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
                 }
             }
 
+            // If denied by rules, check auth token
+            if (dbRequest.State == PermissionState.Denied)
+            {
+                if (AuthTokenValidator != null)
+                {
+                    if (AuthTokenValidator(dbRequest))
+                    {
+                        dbRequest.State = PermissionState.Granted;
+                    }
+                }
+            }
+
             return dbRequest;
         }
+
+        public Func<DynDatabaseRequest, bool> AuthTokenValidator { get; set; }
     }
 }
