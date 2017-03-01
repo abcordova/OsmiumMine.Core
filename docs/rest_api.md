@@ -103,6 +103,13 @@ Add `shallow=1` to the query string to do a shallow
 retrieve. A shallow retrieve replaces all child
 value objects with `true`, but retains primitive values.
 
+
+##### Additional parameters
+
+Add `print=silent` to the query string to do a silent operation.
+This will suppress any returned data, and instead provide
+the `204 No Content` status code on a successful operation.
+
 #### Manipulating data
 
 Using a combination of the above operations,
