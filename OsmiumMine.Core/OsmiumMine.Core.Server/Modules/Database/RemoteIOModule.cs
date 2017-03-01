@@ -159,7 +159,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Read query parameters
-            var shallow = (string)Request.Query.shallow == "true";
+            var shallow = (string)Request.Query.shallow == "1";
             var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
             var dataBundle = await dynDbService.GetData(dbRequest.DatabaseId, dbRequest.Path, shallow);
 

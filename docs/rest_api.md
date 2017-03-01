@@ -50,24 +50,7 @@ Addtionally, `PUT`, `PATCH`, and `POST` all require
 a request body containing a JSON string containing the request
 payload sent with the MIME type `application/json`.
 
-#### Database operations
-
-##### PUT
-
-##### UPDATE
-
-##### PUSH
-
-##### DELETE
-
-##### RETRIEVE
-
-#### Manipulating data
-
-Using a combination of the above operations,
-an application can manage its remotely stored data.
-
-##### Database path
+#### Database path
 
 The `path` parameter specifies the path in the database.
 For example, assume the following data in the database is stored at the
@@ -93,6 +76,36 @@ would return the value of the `cookie` object.
 
 This powerful JSON path-based interface provides strong
 support for dynamic and extensible data storage.
+
+#### Database operations
+
+##### PUT
+
+Write data to the database. Replaces any existing data.
+
+##### UPDATE
+
+Write data to the database. New data is merged with existing data.
+
+##### PUSH
+
+Pushes data to a time-keyed list in the database. This
+is especially useful for sequential data such as a message thread.
+
+##### DELETE
+
+Deletes all data under the specified path.
+
+##### RETRIEVE
+
+Retrieves all data under the specified path.
+Add `shallow=1` to the query string to do a shallow
+retrieve.
+
+#### Manipulating data
+
+Using a combination of the above operations,
+an application can manage its remotely stored data.
 
 #### Database Realms
 
