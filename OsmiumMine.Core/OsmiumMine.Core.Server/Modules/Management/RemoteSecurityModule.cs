@@ -30,6 +30,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             // Security setup
             Post("/rules/create/{dbid}", HandleCreateRuleRequestAsync);
             Delete("/rules/clear/{dbid}", HandleClearRulesRequestAsync);
+            Delete("/rules/delete/{dbid}", HandleDeleteRuleRequestAsync);
             Get("/rules/list/{dbid}", HandleGetRuleListRequestAsync);
         }
 
@@ -86,6 +87,35 @@ namespace OsmiumMine.Core.Server.Modules.Management
             });
         }
 
+        private async Task<Response> HandleDeleteRuleRequestAsync(dynamic args)
+        {
+            return await Task.Run(() =>
+            {
+                // Path is not necessary for this operation
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
+                if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                var ruleId = (string)Request.Query.id;
+                if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
+                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                {
+                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                }
+                var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
+                // remove all rules that match the given path
+                var removed = false;
+                foreach (var dbRule in dbRules)
+                {
+                    if (dbRule.Id == ruleId)
+                    {
+                        dbRules.Remove(dbRule);
+                        removed = true;
+                        break;
+                    }
+                }
+                return removed ? HttpStatusCode.OK : HttpStatusCode.NotFound;
+            });
+        }
+
         private async Task<Response> HandleGetRuleListRequestAsync(dynamic args)
         {
             return await Task.Run(() =>
@@ -129,7 +159,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 }
                 var rule = new SecurityRule(path, ruleFlags, allowRule, priority);
                 OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Add(rule);
-                return HttpStatusCode.OK;
+                return Response.AsJsonNet(rule);
             });
         }
     }

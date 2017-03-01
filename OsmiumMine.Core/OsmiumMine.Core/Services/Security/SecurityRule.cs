@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using OsmiumMine.Core.Services.DynDatabase.Access;
 using OsmiumMine.Core.Utilities;
+using System;
 using System.Text.RegularExpressions;
 
 namespace OsmiumMine.Core.Services.Security
@@ -31,6 +32,12 @@ namespace OsmiumMine.Core.Services.Security
         [JsonProperty("allow")]
         public bool Allow { get; }
 
+        /// <summary>
+        /// A unique identifier for the rule
+        /// </summary>
+        [JsonProperty("id")]
+        public string Id { get; }
+
         [JsonConstructor]
         public SecurityRule()
         {
@@ -60,6 +67,7 @@ namespace OsmiumMine.Core.Services.Security
             Actions = actions;
             PathRegex = pathRegex;
             Allow = allow;
+            Id = Guid.NewGuid().ToString("N");
 
             // By default, use the pattern length for a rough approximation when the priority is not manually specified
             if (priority < 0)

@@ -192,8 +192,9 @@ by `/rsec`.
 
 ##### Creating Rules
 
-Path:
+Request:
 
+`POST`
 `/rules/create/{dbid}`
 
 Parameters:
@@ -205,3 +206,76 @@ URL:
 Query string:
 
 - `path` - the path pattern to apply the rule to
+- `allow` (optional, default = `true`) - `1` to accept matching requestss or `0` to deny matching requests
+- `priority` (optional, default = `-1`) - The priority for the rule. If not given, the default priority calculation will be used.
+
+Description:
+
+Creates a security rule with the specified parameters and stores it in memory.
+Note that these rules will not persist after a server restart.
+
+##### Deleting Rules
+
+Request:
+
+`DELETE`
+`/rules/remove/{dbid}`
+
+Parameters:
+
+URL:
+
+- `dbid` - the database realm to access
+
+Query string:
+
+- `id` - the ID of the rule to remove. IDs can be obtained after
+  rule creation or through rule enumeration.
+
+Description:
+
+All security rules matching the specified path will be deleted. Please note
+that these changes will not persist after a server restart.
+
+##### Batch-Clearing Rules
+
+Request:
+
+`DELETE`
+`/rules/clear/{dbid}`
+
+Parameters:
+
+URL:
+
+- `dbid` - the database realm to access
+
+Query string:
+
+- `path` - the path pattern to match the path to
+
+Description:
+
+All security rules matching the specified path will be deleted. Please note
+that these changes will not persist after a server restart.
+
+##### Enumerating Rules
+
+Request:
+
+`DELETE`
+`/rules/list/{dbid}`
+
+Parameters:
+
+URL:
+
+- `dbid` - the database realm to access
+
+Query string:
+
+- `path` - the path pattern to match the path to
+
+Description:
+
+All security rules matching the specified path will be returned in a JSON array.
