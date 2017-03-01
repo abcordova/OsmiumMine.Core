@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Runtime.Serialization;
 
 namespace OsmiumMine.Core.Server.Configuration.Access
@@ -6,17 +7,21 @@ namespace OsmiumMine.Core.Server.Configuration.Access
     /// <summary>
     /// An enumeration of access scope identifiers, used for granular permission grants on key access
     /// </summary>
+    [Flags]
     public enum ApiAccessScope
     {
         // General
         [EnumMember(Value = "read")]
-        Read,
+        Read = 1 << 0,
 
         [EnumMember(Value = "write")]
-        Write,
+        Write = 1 << 1,
 
         [EnumMember(Value = "admin")]
-        Admin,
+        Admin = 1 << 2,
+
+        [EnumMember(Value = "readwrite")]
+        ReadWrite = Read | Write
 
         // Types of data
     }

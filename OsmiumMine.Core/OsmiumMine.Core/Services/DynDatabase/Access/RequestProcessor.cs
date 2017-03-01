@@ -12,12 +12,12 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
             Context = context;
         }
 
-        public DynDatabaseRequest Process(dynamic args, DatabaseAction dbAction)
+        public DynDatabaseRequest Process(dynamic args, dynamic query, DatabaseAction dbAction)
         {
             // Read basic parameters
             var path = (string)args.path ?? ""; // null paths aren't valid
             var databaseId = (string)args.dbid; // database ID is required!
-            var authItem = (string)args.auth;
+            var authItem = (string)query.auth;
             // Create request shell
             var dbRequest = new DynDatabaseRequest
             {
