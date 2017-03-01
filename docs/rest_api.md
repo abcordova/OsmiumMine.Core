@@ -214,6 +214,10 @@ Description:
 Creates a security rule with the specified parameters and stores it in memory.
 Note that these rules will not persist after a server restart.
 
+Result notes:
+
+Returns a JSON object containing the rule and its data.
+
 ##### Deleting Rules
 
 Request:
@@ -234,8 +238,12 @@ Query string:
 
 Description:
 
-All security rules matching the specified path will be deleted. Please note
+Any security rule matching the ID will be removed. Please note
 that these changes will not persist after a server restart.
+
+Result notes:
+
+`404` if an ID does not match any rules.
 
 ##### Batch-Clearing Rules
 
@@ -263,7 +271,7 @@ that these changes will not persist after a server restart.
 
 Request:
 
-`DELETE`
+`GET`
 `/rules/list/{dbid}`
 
 Parameters:
@@ -279,3 +287,7 @@ Query string:
 Description:
 
 All security rules matching the specified path will be returned in a JSON array.
+
+Result notes:
+
+A JSON array containing rules will be returned.
