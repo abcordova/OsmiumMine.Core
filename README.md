@@ -91,6 +91,9 @@ map structure.
 OsmiumMine's database feature provides a schemaless dynamic database to store
 any kind of data and allows convenient querying and modification.
 
+See the [REST API documentation](docs/rest_api.md) for detailed information on OsmiumMine's remote database and security rules
+and remote API access.
+
 #### Security rules
 
 If your application requires data in a database
