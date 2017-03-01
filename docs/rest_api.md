@@ -1,9 +1,11 @@
 
-# OsmiumMine Core Documentation
+# OsmiumMine Core REST API Documentation
 
 Version 0.1.1
 
 Copyright &copy; 2016-2017 Nihal Talur (0xFireball), IridiumIon Software. All Rights Reserved.
+
+Except as otherwise noted, the content of this page is licensed under the Creative Commons Attribution 3.0 License, and code samples are licensed under the Apache 2.0 License.
 
 ## About
 
@@ -23,7 +25,7 @@ OsmiumMine contains the following modules:
 
 ## Module documentation
 
-### Routes
+### Application Route Prefix
 
 All listed routes should be prefixed by `/om`.
 For example, a listed route `/test` would correspond
@@ -164,4 +166,18 @@ public enum DatabaseAction
 
 ### Remote Security
 
-TODO
+#### Remote Security Routes
+
+All **Remote Security** routes should additionally be prefixed
+by `/rsec`.
+
+#### Authentication
+
+The **Remote Security** API requires stateless authentication through
+an API key. This is important because the API provides complete access
+over all the databases.
+
+API keys can be specified in the application configuration. Please
+refer to the Server Configuration document for more information.
+
+
