@@ -157,7 +157,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 {
                     OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var rule = new SecurityRule(path, ruleFlags, allowRule, priority);
+                var rule = new SecurityRule(new Regex(path), ruleFlags, allowRule, priority);
                 OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Add(rule);
                 return Response.AsJsonNet(rule);
             });
