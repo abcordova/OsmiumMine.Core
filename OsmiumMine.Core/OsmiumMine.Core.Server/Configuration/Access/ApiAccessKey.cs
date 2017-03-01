@@ -32,6 +32,6 @@ namespace OsmiumMine.Core.Server.Configuration.Access
         public string Key { get; set; }
 
         [JsonProperty("accessScopes")]
-        public ApiAccessScope[] AccessScopes { get; set; } = new[] { ApiAccessScope.Read };
+        public ApiAccessScope[] AccessScopes { get; set; } = new ApiAccessScope[0];
     }
 }
