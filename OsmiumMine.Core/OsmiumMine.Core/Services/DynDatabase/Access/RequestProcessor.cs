@@ -27,16 +27,21 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
                 RequestedAction = dbAction
             };
 
+            return ValidateAccess(dbRequest);
+        }
+
+        public DynDatabaseRequest ValidateAccess(DynDatabaseRequest dbRequest)
+        {
             // Check permissions
             dbRequest.State = PermissionState.Denied;
-            if (Context.Configuration.SecurityRuleTable.ContainsKey(databaseId))
+            if (Context.Configuration.SecurityRuleTable.ContainsKey(dbRequest.DatabaseId))
             {
                 // Rules are sorted in ascending priority order
-                foreach (var rule in Context.Configuration.SecurityRuleTable[databaseId])
+                foreach (var rule in Context.Configuration.SecurityRuleTable[dbRequest.DatabaseId])
                 {
-                    if (rule.PathRegex.Match($"/{path}").Success)
+                    if (rule.PathRegex.Match($"/{dbRequest.Path}").Success)
                     {
-                        if (rule.Actions.HasFlag(dbAction))
+                        if (rule.Actions.HasFlag(dbRequest.RequestedAction))
                         {
                             dbRequest.State = rule.Allow ? PermissionState.Granted : PermissionState.Denied;
                             break;
