@@ -12,5 +12,6 @@
         public string Path { get; set; }
         public bool Valid { get; set; }
         public PermissionState State { get; set; }
+        public DatabaseAction RequestedAction { get; set; }
     }
 }

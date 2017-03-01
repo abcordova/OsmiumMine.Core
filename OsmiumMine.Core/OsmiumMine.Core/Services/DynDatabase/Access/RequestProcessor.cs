@@ -23,8 +23,10 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
                 Path = path,
                 DatabaseId = databaseId,
                 Valid = databaseId != null,
-                State = PermissionState.Denied
+                State = PermissionState.Denied,
+                RequestedAction = dbAction
             };
+
             // Check permissions
             dbRequest.State = PermissionState.Denied;
             if (Context.Configuration.SecurityRuleTable.ContainsKey(databaseId))
