@@ -31,21 +31,42 @@ namespace OsmiumMine.Core.Services.Security
         [JsonProperty("allow")]
         public bool Allow { get; }
 
-        protected SecurityRule(Regex pathRegex, DatabaseAction actions, bool allow = true)
+        [JsonConstructor]
+        public SecurityRule()
+        {
+        }
+
+        /// <summary>
+        /// Creates a new security rule
+        /// </summary>
+        /// <param name="pathWildcard"></param>
+        /// <param name="actions">The action flags to grant or restrict access to</param>
+        /// <param name="allow">whether the rule should allow or deny</param>
+        /// <param name="priority">If less than 0, the default priority calculation will be used</param>
+        public SecurityRule(string pathWildcard, DatabaseAction actions = 0, bool allow = true, int priority = -1) : this(
+                new Regex(WildcardMatcher.ToRegex(pathWildcard)), actions, allow, priority)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new security rule
+        /// </summary>
+        /// <param name="pathRegex"></param>
+        /// <param name="actions">The action flags to grant or restrict access to</param>
+        /// <param name="allow">Whether the rule should allow or deny</param>
+        /// <param name="priority">If less than 0, the default priority calculation will be used</param>
+        public SecurityRule(Regex pathRegex, DatabaseAction actions = 0, bool allow = true, int priority = -1)
         {
             Actions = actions;
             PathRegex = pathRegex;
             Allow = allow;
-        }
 
-        public static SecurityRule FromRegex(string regexPattern, DatabaseAction allowedActions = 0)
-        {
-            return new SecurityRule(new Regex(regexPattern, RegexOptions.Compiled), allowedActions);
-        }
-
-        public static SecurityRule FromWildcard(string wildcardPattern, DatabaseAction allowedActions = 0)
-        {
-            return FromRegex(WildcardMatcher.ToRegex(wildcardPattern), allowedActions);
+            // By default, use the pattern length for a rough approximation when the priority is not manually specified
+            if (priority < 0)
+            {
+                Priority = PathRegex.ToString().Length;
+            }
+            else { Priority = priority; }
         }
     }
 }

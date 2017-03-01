@@ -166,11 +166,6 @@ public enum DatabaseAction
 
 ### Remote Security
 
-#### Remote Security Routes
-
-All **Remote Security** routes should additionally be prefixed
-by `/rsec`.
-
 #### Authentication
 
 The **Remote Security** API requires stateless authentication through
@@ -180,4 +175,33 @@ over all the databases.
 API keys can be specified in the application configuration. Please
 refer to the Server Configuration document for more information.
 
+API keys should be added to all requests to this module as a query
+parameter in the form `apikey={your_api_key}`.
 
+#### Path patterns
+
+Rules match paths through path patterns, which can be specified
+as wildcards or as regular expressions. If using a wildcard as part
+of the path, pass the query string parameter `w=1` to indicate that
+the path pattern should be parsed as a wildcard.
+
+#### Remote Security Routes
+
+All **Remote Security** routes should additionally be prefixed
+by `/rsec`.
+
+##### Creating Rules
+
+Path:
+
+`/rules/create/{dbid}`
+
+Parameters:
+
+URL:
+
+- `dbid` - the database realm to access
+
+Query string:
+
+- `path` - the path pattern to apply the rule to

@@ -107,6 +107,9 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                var allowRule = (string)Request.Query.allow == "1"; // whether the rule should set allow to true
+                int priority = -1;
+                int.TryParse((string)Request.Query.priority, out priority);
                 DatabaseAction ruleFlags = 0;
                 try
                 {
@@ -124,7 +127,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 {
                     OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Add(SecurityRule.FromRegex(path, ruleFlags));
+                var rule = new SecurityRule(path, ruleFlags, allowRule, priority);
+                OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Add(rule);
                 return HttpStatusCode.OK;
             });
         }
