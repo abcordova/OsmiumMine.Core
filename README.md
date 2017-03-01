@@ -112,7 +112,12 @@ and remote API access.
 
 ### Extensions
 
+OsmiumMine extensions are available in the AlphaOsmium edition, but not in the standalone edition.
+
 AlphaOsmium DbSync extends OsmiumMine by providing a real-time, event-driven data synchronization API, with support for both online and offline transactions.
+
+- Evented data streaming
+- Offline caching and synchronization
 
 ## License
 
