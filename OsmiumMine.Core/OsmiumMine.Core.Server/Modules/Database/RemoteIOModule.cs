@@ -190,7 +190,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
                     var identity = authenticator.ResolveClientIdentity(accessRequest.AuthToken);
                     if (identity == null) return false;
                     var accessValidator = new ClientApiAccessValidator();
-                    if ((accessRequest.RequestedAction | DatabaseAction.Write) > 0)
+                    if ((accessRequest.RequestedAction & DatabaseAction.Write) != 0)
                     {
                         // Ensure write permission for write action
                         if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
@@ -200,7 +200,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
                             return true;
                         }
                     }
-                    if ((accessRequest.RequestedAction | DatabaseAction.ReadLive) > 0)
+                    if ((accessRequest.RequestedAction & DatabaseAction.ReadLive) != 0)
                     {
                         // Ensure read permission for read/stream action
                         if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
