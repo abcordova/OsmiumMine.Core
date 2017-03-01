@@ -31,5 +31,16 @@ namespace IridiumIon.JsonFlat3
                 return tokPath;
             }
         }
+
+        public string ArrayPrefix
+        {
+            get
+            {
+                var tokPath = TokenPath;
+                // if tokPath isn't empty, it needs . suffix to be a valid prefix
+                if (tokPath.Length > 0) tokPath += "[";
+                return tokPath;
+            }
+        }
     }
 }

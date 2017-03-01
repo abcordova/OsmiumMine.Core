@@ -135,7 +135,9 @@ namespace OsmiumMine.Core.Services.DynDatabase
                 // Unflatten and retrieve JSON object
                 var flatJsonDict = new Dictionary<string, string>();
                 // Use an optimization to only fetch requested keys
-                foreach (var key in DbService.Store.GetKeysEnumerable(domain).Where(x => x.StartsWith(dataPath.TokenPrefix, StringComparison.Ordinal)))
+                foreach (var key in DbService.Store.GetKeysEnumerable(domain).Where(x =>
+                    x.StartsWith(dataPath.TokenPrefix, StringComparison.Ordinal)
+                    || x.StartsWith(dataPath.ArrayPrefix, StringComparison.Ordinal)))
                 {
                     var val = DbService.Store.Get(domain, key);
                     flatJsonDict.Add(key, val);
