@@ -2,6 +2,9 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OsmiumMine.Core.Server.Configuration;
+using OsmiumMine.Core.Server.Configuration.Access;
+using OsmiumMine.Core.Server.Services.Authentication;
+using OsmiumMine.Core.Server.Services.Authentication.Security;
 using OsmiumMine.Core.Server.Utilities;
 using OsmiumMine.Core.Services.DynDatabase;
 using OsmiumMine.Core.Services.DynDatabase.Access;
@@ -56,7 +59,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePutDataAsync(dynamic args)
         {
-            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = CreateRequestProcessor();
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Put);
             if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -86,7 +89,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePatchDataAsync(dynamic args)
         {
-            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = CreateRequestProcessor();
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Update);
             if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -115,7 +118,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePostDataAsync(dynamic args)
         {
-            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = CreateRequestProcessor();
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Push);
             if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -144,7 +147,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandleDeleteDataAsync(dynamic args)
         {
-            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = CreateRequestProcessor();
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Delete);
             if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -156,7 +159,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandleGetDataAsync(dynamic args)
         {
-            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = CreateRequestProcessor();
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Retrieve);
             if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -172,6 +175,45 @@ namespace OsmiumMine.Core.Server.Modules.Database
             }
 
             return Response.FromJsonString(dataBundle.ToString());
+        }
+
+        private RequestProcessor CreateRequestProcessor()
+        {
+            var processor = new RequestProcessor(OMServerConfiguration.OMContext)
+            {
+                AuthTokenValidator = accessRequest =>
+                {
+                    // get key identity
+                    var authenticator = new ClientAuthenticationService(OMServerConfiguration);
+                    var identity = authenticator.ResolveClientIdentity(accessRequest.AuthToken);
+                    if (identity == null) return false;
+                    var accessValidator = new ClientApiAccessValidator();
+                    if ((accessRequest.RequestedAction | DatabaseAction.Write) > 0)
+                    {
+                        // Ensure write permission for write action
+                        if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
+                                ApiAccessScope.Write
+                        }), accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
+                        {
+                            return true;
+                        }
+                    }
+                    if ((accessRequest.RequestedAction | DatabaseAction.ReadLive) > 0)
+                    {
+                        // Ensure read permission for read/stream action
+                        if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
+                                ApiAccessScope.Read
+                        }), accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            };
+
+            return processor;
         }
     }
 }

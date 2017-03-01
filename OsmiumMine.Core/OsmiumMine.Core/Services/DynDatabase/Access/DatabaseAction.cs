@@ -12,6 +12,7 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
         Put = 1 << 4,
         Stream = 1 << 5,
         Read = Retrieve,
+        ReadLive = Read | Stream,
         Write = Push | Update | Put,
         ReadWrite = Read | Write,
         All = ReadWrite | Stream

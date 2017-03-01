@@ -20,21 +20,26 @@ namespace OsmiumMine.Core.Server.Services.Authentication.Security
                 {
                     return HttpStatusCode.Unauthorized;
                 }
-                // Override claim
-                if (ctx.CurrentUser.EnsureClaim(adminClaim))
-                {
-                    return null;
-                }
-                // Make sure all claims are available
-                foreach (var testClaim in claims)
-                {
-                    if (!ctx.CurrentUser.EnsureClaim(testClaim))
-                    {
-                        return HttpStatusCode.Unauthorized;
-                    }
-                }
-                return null;
+                return ctx.CurrentUser.EnsureAllClaims(claims, adminClaim) ? null : ctx.Response.WithStatusCode(HttpStatusCode.Unauthorized);
             });
+        }
+
+        public static bool EnsureAllClaims(this ClaimsPrincipal principal, IEnumerable<Claim> claims, Claim adminClaim = null)
+        {
+            // Override claim
+            if (principal.EnsureClaim(adminClaim))
+            {
+                return true;
+            }
+            // Make sure all claims are available
+            foreach (var testClaim in claims)
+            {
+                if (!principal.EnsureClaim(testClaim))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
