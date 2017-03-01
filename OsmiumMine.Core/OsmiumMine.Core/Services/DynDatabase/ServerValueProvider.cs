@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+using System;
 
 namespace OsmiumMine.Core.Services.DynDatabase
 {
@@ -16,6 +13,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
             {
                 case "timestamp":
                     return new JValue(DateTimeOffset.Now.ToUnixTimeSeconds());
+
                 default:
                     {
                         return JValue.CreateNull();

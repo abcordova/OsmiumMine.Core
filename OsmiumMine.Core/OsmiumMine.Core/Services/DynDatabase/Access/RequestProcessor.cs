@@ -1,10 +1,10 @@
 ﻿namespace OsmiumMine.Core.Services.DynDatabase.Access
 {
-    public class DynDatabaseRequestProcessor
+    public class RequestProcessor
     {
         public OsmiumMineContext Context { get; set; }
 
-        public DynDatabaseRequestProcessor(OsmiumMineContext context)
+        public RequestProcessor(OsmiumMineContext context)
         {
             Context = context;
         }

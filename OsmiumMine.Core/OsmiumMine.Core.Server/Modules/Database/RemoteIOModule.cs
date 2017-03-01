@@ -7,6 +7,7 @@ using OsmiumMine.Core.Services.DynDatabase;
 using OsmiumMine.Core.Services.DynDatabase.Access;
 using System.IO;
 using System.Threading.Tasks;
+using static OsmiumMine.Core.Services.DynDatabase.DynamicDatabaseService;
 
 namespace OsmiumMine.Core.Server.Modules.Database
 {
@@ -54,7 +55,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePutDataAsync(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Put);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -84,7 +85,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePatchDataAsync(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Update);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -113,7 +114,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandlePostDataAsync(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Push);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -142,7 +143,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandleDeleteDataAsync(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Delete);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
@@ -154,7 +155,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private async Task<Response> HandleGetDataAsync(dynamic args)
         {
-            var requestProcessor = new DynDatabaseRequestProcessor(OMServerConfiguration.OMContext);
+            var requestProcessor = new RequestProcessor(OMServerConfiguration.OMContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, DatabaseAction.Retrieve);
             if (dbRequest.PermissionState == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;

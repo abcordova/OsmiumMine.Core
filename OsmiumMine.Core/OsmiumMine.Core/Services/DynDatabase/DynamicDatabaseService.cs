@@ -11,6 +11,13 @@ namespace OsmiumMine.Core.Services.DynDatabase
 {
     public class DynamicDatabaseService
     {
+        public enum NodeDataOvewriteMode
+        {
+            Put,
+            Update,
+            Push
+        }
+
         public KeyValueDatabaseService KeyValueDatabase { get; set; }
 
         public DynamicDatabaseService(KeyValueDatabaseService keyValueDatabase)
