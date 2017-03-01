@@ -24,4 +24,85 @@ OsmiumMine contains the following modules:
 ## Routes
 
 All listed routes should be prefixed by `/om`.
-For example, a route `/test`
+For example, a listed route `/test` would correspond
+to `/om/test`.
+
+### Remote IO
+
+All **Remote IO** routes should additionally be prefixed by `/io`. For example,
+`/a/b` would be `/om/io/a/b`.
+
+All **Remote IO** routes are of the following format:
+
+Path:
+
+`/{databaseId}/{path}.json`
+
+With one of the following verbs:
+
+- `PUT` - Performs a PUT operation in the database
+- `PATCH` - Performs an UPDATE operation in the database
+- `POST` - Performs a PUSH operation in the database
+- `DELETE` - Performs a DELETE operation in the database
+- `GET` - Performs a RETRIEVE operation in the database
+
+Addtionally, `PUT`, `PATCH`, and `POST` all require
+a request body containing a JSON string containing the request
+payload sent with the MIME type `application/json`.
+
+#### Database operations
+
+##### PUT
+
+##### UPDATE
+
+##### PUSH
+
+##### DELETE
+
+##### RETRIEVE
+
+#### Manipulating data
+
+Using a combination of the above operations,
+an application can manage its remotely stored data.
+
+##### Database path
+
+The `path` parameter specifies the path in the database.
+For example, assume the following data in the database is stored at the
+root:
+
+```json
+{
+    "things": {
+        "cookie": {
+            "name": "Chocolatey"
+        },
+        "table": {
+            name: "Tabley McTableFace"
+        }
+    }
+}
+```
+
+Using RETRIEVE on `/.json` would return the following data.
+Using RETRIEVE on `/things.json` would return the value
+of the `things` object. Using RETRIEVE on `/things/cookie.json`
+would return the value of the `cookie` object.
+
+This powerful JSON path-based interface provides strong
+support for dynamic and extensible data storage.
+
+#### Database Realms
+
+OsmiumMine allows for an unlimited number of databases,
+Simply by specifying a different string as the `databaseId`,
+a different database with its own independent data store can be accessed.
+The default security rules, however, completely deny
+access to a database, for security reasons. The **Remote Security**
+module can be used to dynamically update database rules.
+
+#### Security Rules
+
+TODO
