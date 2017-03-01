@@ -78,7 +78,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
             // Write data
             var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
-            var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest.DatabaseId, dbRequest.Path, NodeDataOvewriteMode.Put);
+            var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Put);
 
             // Return data written
             return Response.FromJsonString(placeResult);
@@ -107,7 +107,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
             // Write data
             var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
-            var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest.DatabaseId, dbRequest.Path, NodeDataOvewriteMode.Update);
+            var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Update);
 
             // Return data written
             return Response.FromJsonString(placeResult);
@@ -136,7 +136,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
             // Write data
             var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
-            var pushId = await dynDbService.PlaceData(dataBundle, dbRequest.DatabaseId, dbRequest.Path, NodeDataOvewriteMode.Push);
+            var pushId = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Push);
 
             // Return data written
             return Response.AsJsonNet(new { name = pushId });
@@ -149,7 +149,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
-            await dynDbService.DeleteData(dbRequest.DatabaseId, dbRequest.Path);
+            await dynDbService.DeleteData(dbRequest);
 
             return Response.FromJsonString(new JObject().ToString());
         }
@@ -163,7 +163,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             // Read query parameters
             var shallow = (string)Request.Query.shallow == "1";
             var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
-            var dataBundle = await dynDbService.GetData(dbRequest.DatabaseId, dbRequest.Path, shallow);
+            var dataBundle = await dynDbService.GetData(dbRequest, shallow);
 
             if (dataBundle == null)
             {

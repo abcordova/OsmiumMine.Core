@@ -1,6 +1,7 @@
 ﻿using IridiumIon.JsonFlat3;
 using Newtonsoft.Json.Linq;
 using OsmiumMine.Core.Services.Database;
+using OsmiumMine.Core.Services.DynDatabase.Access;
 using OsmiumMine.Core.Utilities;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,11 @@ namespace OsmiumMine.Core.Services.DynDatabase
             DbService = keyValueDatabase;
         }
 
-        public async Task<string> PlaceData(JObject dataBundleRoot, string subDatabaseId, string path, NodeDataOvewriteMode ovewriteMode, bool response = true)
+        public async Task<string> PlaceData(JObject dataBundleRoot, DynDatabaseRequest request, NodeDataOvewriteMode overwriteMode, bool response = true)
         {
-            var domain = DbService.GetDomainPath(subDatabaseId);
+            var realmDomain = DbService.GetDomainPath(request.DatabaseId);
             string result = null; // Optionally used to return a result
-            var dataPath = new FlatJsonPath(path);
+            var dataPath = new FlatJsonPath(request.Path);
             await Task.Run(() =>
             {
                 // Parse server values
@@ -48,7 +49,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
                 }
 
                 // Put in the new data
-                switch (ovewriteMode)
+                switch (overwriteMode)
                 {
                     case NodeDataOvewriteMode.Update:
                         {
@@ -57,7 +58,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             // Merge input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
-                                DbService.Store.Set(domain, kvp.Key, kvp.Value);
+                                DbService.Store.Set(realmDomain, kvp.Key, kvp.Value);
                             }
                         }
 
@@ -69,16 +70,16 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             var dataTokenPrefix = dataPath.TokenPrefix;
                             // Get existing data
                             var flattenedBundle = new FlatJsonObject(dataBundleRoot, dataTokenPrefix);
-                            var existingData = DbService.Store.GetKeys(domain).Where(x => x.StartsWith(dataTokenPrefix, StringComparison.Ordinal));
+                            var existingData = DbService.Store.GetKeys(realmDomain).Where(x => x.StartsWith(dataTokenPrefix, StringComparison.Ordinal));
                             // Remove existing data
                             foreach (var key in existingData)
                             {
-                                DbService.Store.Delete(domain, key);
+                                DbService.Store.Delete(realmDomain, key);
                             }
                             // Add input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
-                                DbService.Store.Set(domain, kvp.Key, kvp.Value);
+                                DbService.Store.Set(realmDomain, kvp.Key, kvp.Value);
                             }
                         }
                         break;
@@ -94,7 +95,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             // Merge input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
-                                DbService.Store.Set(domain, kvp.Key, kvp.Value);
+                                DbService.Store.Set(realmDomain, kvp.Key, kvp.Value);
                             }
                         }
                         break;
@@ -108,10 +109,10 @@ namespace OsmiumMine.Core.Services.DynDatabase
             return result;
         }
 
-        public async Task DeleteData(string subDatabaseId, string path)
+        public async Task DeleteData(DynDatabaseRequest request)
         {
-            var domain = DbService.GetDomainPath(subDatabaseId);
-            var dataPath = new FlatJsonPath(path);
+            var domain = DbService.GetDomainPath(request.DatabaseId);
+            var dataPath = new FlatJsonPath(request.Path);
             await Task.Run(() =>
             {
                 // Get existing data
@@ -124,10 +125,10 @@ namespace OsmiumMine.Core.Services.DynDatabase
             });
         }
 
-        public async Task<JToken> GetData(string subDatabaseId, string path, bool shallow = false)
+        public async Task<JToken> GetData(DynDatabaseRequest request, bool shallow = false)
         {
-            var domain = DbService.GetDomainPath(subDatabaseId);
-            var dataPath = new FlatJsonPath(path);
+            var domain = DbService.GetDomainPath(request.DatabaseId);
+            var dataPath = new FlatJsonPath(request.Path);
             return await Task.Run(() =>
             {
                 if (!DbService.Store.Exists(domain)) return null; // 404 - There's no data container
