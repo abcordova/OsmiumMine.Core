@@ -23,7 +23,7 @@
                 Valid = databaseId != null,
                 PermissionState = PermissionState.Denied
             };
-            // TODO: Check permissions
+            // Check permissions
             dbRequest.PermissionState = PermissionState.Denied;
             if (Context.Configuration.SecurityRuleTable.ContainsKey(databaseId))
             {
@@ -32,9 +32,9 @@
                 {
                     if (rule.PathRegex.Match($"/{path}").Success)
                     {
-                        if (rule.AllowedActions.HasFlag(dbAction))
+                        if (rule.Actions.HasFlag(dbAction))
                         {
-                            dbRequest.PermissionState = PermissionState.Granted;
+                            dbRequest.PermissionState = rule.Allow ? PermissionState.Granted : PermissionState.Denied;
                             break;
                         }
                     }

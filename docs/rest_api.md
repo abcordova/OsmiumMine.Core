@@ -103,7 +103,6 @@ Add `shallow=1` to the query string to do a shallow
 retrieve. A shallow retrieve replaces all child
 value objects with `true`, but retains primitive values.
 
-
 ##### Additional parameters
 
 Add `print=silent` to the query string to do a silent operation.
@@ -126,4 +125,34 @@ module can be used to dynamically update database rules.
 
 #### Security Rules
 
-TODO
+Security rules are essential for ensuring application data
+integrity and managing access of unauthenticated IO
+requests.
+
+The security rule pipeline is run on every request to
+determine whether it should be allowed. It works
+like this:
+
+- Set the request DENIED (by default)
+- Check the corresponding security rule table for the given database
+  - (Rules are sorted by priority when created)
+- Retrieve all rules matching the given path
+- Check each rule in order until one marks the request as GRANTED
+
+Each rule can specify one or more database action to allow:
+
+```csharp
+[Flags]
+public enum DatabaseAction
+{
+    Retrieve = 1 << 0,
+    Delete = 1 << 1,
+    Push = 1 << 2,
+    Update = 1 << 3,
+    Put = 1 << 4,
+    Read = Retrieve,
+    Write = Push | Update | Put,
+    All = Retrieve | Delete | Push | Update | Put
+}
+```
+

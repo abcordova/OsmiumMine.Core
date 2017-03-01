@@ -19,16 +19,23 @@ namespace OsmiumMine.Core.Services.Security
         [JsonProperty("pathRegex")]
         public Regex PathRegex { get; private set; }
 
-        [JsonProperty("allowedActions")]
-        public DatabaseAction AllowedActions { get; set; }
+        /// <summary>
+        /// The actions that this rule applies to
+        /// </summary>
+        [JsonProperty("actions")]
+        public DatabaseAction Actions { get; set; }
 
         [JsonProperty("priority")]
         public int Priority { get; }
 
-        protected SecurityRule(Regex regex, DatabaseAction allowedActions)
+        [JsonProperty("allow")]
+        public bool Allow { get; }
+
+        protected SecurityRule(Regex pathRegex, DatabaseAction actions, bool allow = true)
         {
-            AllowedActions = allowedActions;
-            PathRegex = regex;
+            Actions = actions;
+            PathRegex = pathRegex;
+            Allow = allow;
         }
 
         public static SecurityRule FromRegex(string regexPattern, DatabaseAction allowedActions = 0)
