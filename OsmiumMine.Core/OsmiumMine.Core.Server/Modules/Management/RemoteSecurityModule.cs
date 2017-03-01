@@ -32,6 +32,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             Delete("/rules/clear/{dbid}", HandleClearRulesRequestAsync);
             Delete("/rules/delete/{dbid}", HandleDeleteRuleRequestAsync);
             Get("/rules/list/{dbid}", HandleGetRuleListRequestAsync);
+            Get("/rules/get/{dbid}", HandleGetRuleByIdRequestAsync);
         }
 
         private static (string, string) ParseRequestArgs(dynamic args, Request request, bool parsePathPattern = true)
@@ -113,6 +114,34 @@ namespace OsmiumMine.Core.Server.Modules.Management
                     }
                 }
                 return removed ? HttpStatusCode.OK : HttpStatusCode.NotFound;
+            });
+        }
+
+        private async Task<Response> HandleGetRuleByIdRequestAsync(dynamic args)
+        {
+            return await Task.Run(() =>
+            {
+                // Path is not necessary for this operation
+                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
+                if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                var ruleId = (string)Request.Query.id;
+                if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
+                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                {
+                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                }
+                var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
+                // remove all rules that match the given path
+                SecurityRule foundRule = null;
+                foreach (var dbRule in dbRules)
+                {
+                    if (dbRule.Id == ruleId)
+                    {
+                        foundRule = dbRule;
+                        break;
+                    }
+                }
+                return foundRule != null ? Response.AsJsonNet(foundRule) : HttpStatusCode.NotFound;
             });
         }
 
