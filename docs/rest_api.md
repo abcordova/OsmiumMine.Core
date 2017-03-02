@@ -1,7 +1,7 @@
 
 # OsmiumMine Core REST API Documentation
 
-Version 0.1.1
+Version 0.1.2
 
 Copyright &copy; 2016-2017 Nihal Talur (0xFireball), IridiumIon Software. All Rights Reserved.
 
@@ -288,3 +288,28 @@ All security rules matching the specified path will be returned in a JSON array.
 Result notes:
 
 A JSON array containing rules will be returned.
+
+##### Retrieving a single rule
+
+Request:
+
+`GET`
+`/rules/get/{dbid}`
+
+Parameters:
+
+URL:
+
+- `dbid` - the database realm to access
+
+Query string:
+
+- `id` - the rule id
+
+Description:
+
+The first security rule matching the specified path will be returned as a JSON object.
+
+Result notes:
+
+The rule will be returned as a JSON object.
