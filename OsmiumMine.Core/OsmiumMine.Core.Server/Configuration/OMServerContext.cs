@@ -7,7 +7,6 @@ namespace OsmiumMine.Core.Server.Configuration
         public OMServerParameters Parameters { get; set; }
         public OMServerState ServerState { get; set; }
         public OsmiumMineContext OMContext { get; set; }
-
         public KeyValueDatabaseService KeyValueDbService { get; set; }
 
         public OMServerContext(OMServerParameters parameters)

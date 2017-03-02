@@ -54,6 +54,8 @@ namespace OsmiumMine.Core.Server.Configuration
             }
             // Save the state
             savedState.PersistenceMedium.Upsert(savedState);
+            // Update references
+            serverContext.ServerState = savedState;
             // Store the database state in the context
             serverContext.OMContext.ServiceState = savedState.DbServiceState;
         }
