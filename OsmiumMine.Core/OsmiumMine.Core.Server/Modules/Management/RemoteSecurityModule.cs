@@ -71,11 +71,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var dbRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid];
+                var dbRules = OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 foreach (var dbRule in dbRules)
                 {
@@ -97,11 +97,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var dbRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid];
+                var dbRules = OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 var removed = false;
                 foreach (var dbRule in dbRules)
@@ -126,11 +126,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var dbRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid];
+                var dbRules = OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 SecurityRule foundRule = null;
                 foreach (var dbRule in dbRules)
@@ -151,11 +151,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var matchingRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
+                var matchingRules = OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
                 return Response.AsJsonNet(matchingRules);
             });
         }
@@ -182,12 +182,12 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 {
                     return HttpStatusCode.BadRequest;
                 }
-                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
                 var rule = new SecurityRule(new Regex(path), ruleFlags, allowRule, priority);
-                OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid].Add(rule);
+                OMServerConfiguration.OMContext.DbServiceState.SecurityRuleTable[dbid].Add(rule);
                 return Response.AsJsonNet(rule);
             });
         }
