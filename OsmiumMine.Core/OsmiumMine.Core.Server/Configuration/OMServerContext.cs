@@ -5,7 +5,15 @@ namespace OsmiumMine.Core.Server.Configuration
     public class OMServerContext : IOMServerContext
     {
         public OMServerParameters Parameters { get; set; }
-        public OsmiumMineContext OMContext { get; set; }
+        public OMServerState ServerState { get; set; }
+
+        // Proxy to ServerState
+        public OsmiumMineContext OMContext
+        {
+            get => ServerState.OMContext;
+            set { ServerState.OMContext = value; }
+        }
+
         public KeyValueDatabaseService KeyValueDbService { get; set; }
 
         public OMServerContext(OMServerParameters parameters)
