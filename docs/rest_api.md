@@ -211,8 +211,7 @@ Query string:
 
 Description:
 
-Creates a security rule with the specified parameters and stores it in memory.
-Note that these rules will not persist after a server restart.
+Creates a security rule with the specified parameters and stores it in the persistent database state.
 
 Result notes:
 
@@ -238,8 +237,7 @@ Query string:
 
 Description:
 
-Any security rule matching the ID will be removed. Please note
-that these changes will not persist after a server restart.
+Any security rule matching the ID will be removed. Changes will be stored to the persistent database state.
 
 Result notes:
 
@@ -264,8 +262,7 @@ Query string:
 
 Description:
 
-All security rules matching the specified path will be deleted. Please note
-that these changes will not persist after a server restart.
+All security rules matching the specified path will be deleted. Changes will be stored to the persistent database state.
 
 ##### Enumerating Rules
 
