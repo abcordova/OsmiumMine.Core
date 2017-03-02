@@ -29,7 +29,7 @@ namespace OsmiumMine.Core.Server
             // Adds services required for using options.
             services.AddOptions();
             // Register IConfiguration
-            services.Configure<OMCoreServerParameters>(config);
+            services.Configure<OMServerParameters>(config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,9 +42,9 @@ namespace OsmiumMine.Core.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            var serverParameters = new OMCoreServerParameters
+            var serverParameters = new OMServerParameters
             {
-                OMConfig = new OsmiumMineConfiguration()
+                OMConfig = new OMDatabaseConfiguration()
             };
             config.Bind(serverParameters);
             var appConfig = OMServerConfigurator.GetConfiguration(serverParameters);

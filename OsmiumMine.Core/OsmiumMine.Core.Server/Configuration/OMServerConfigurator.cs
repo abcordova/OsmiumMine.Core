@@ -2,7 +2,7 @@
 {
     public static class OMServerConfigurator
     {
-        public static OMCoreServerConfiguration GetConfiguration(OMCoreServerParameters parameters)
+        public static OMCoreServerConfiguration GetConfiguration(OMServerParameters parameters)
         {
             // Load the configuration
             var config = new OMCoreServerConfiguration(parameters)
