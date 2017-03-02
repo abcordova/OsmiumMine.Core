@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OsmiumMine.Core.Configuration
 {
-    public class OMServiceState
+    public class OMDbServiceState
     {
         public Dictionary<string, SecurityRuleCollection> SecurityRuleTable { get; set; } = new Dictionary<string, SecurityRuleCollection>();
     }

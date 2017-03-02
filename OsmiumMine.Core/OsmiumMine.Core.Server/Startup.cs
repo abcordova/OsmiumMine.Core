@@ -6,17 +6,21 @@ using Microsoft.Extensions.Logging;
 using Nancy.Owin;
 using OsmiumMine.Core.Configuration;
 using OsmiumMine.Core.Server.Configuration;
+using System.IO;
 
 namespace OsmiumMine.Core.Server
 {
     public class Startup
     {
+        public const string ServerParametersConfigurationFileName = "omserver.json";
+        public const string ServerStateStorageFileName = "omserver_state.lidb";
+
         private readonly IConfigurationRoot config;
 
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                              .AddJsonFile("omserver.json",
+                              .AddJsonFile(ServerParametersConfigurationFileName,
                                 optional: true,
                                 reloadOnChange: true)
                               .SetBasePath(env.ContentRootPath);
@@ -42,14 +46,19 @@ namespace OsmiumMine.Core.Server
                 app.UseDeveloperExceptionPage();
             }
 
+            // Create default server parameters
             var serverParameters = new OMServerParameters
             {
                 OMConfig = new OMDatabaseConfiguration()
             };
+            // Bind configuration file data to server parameters
             config.Bind(serverParameters);
-            var appConfig = OMServerConfigurator.GetConfiguration(serverParameters);
+            // Create a server context from the parameters
+            var serverContext = OMServerConfigurator.CreateContext(serverParameters);
+            // Load persistent state data
+            OMServerConfigurator.LoadState(serverContext, ServerStateStorageFileName);
 
-            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OMCoreServerBootstrapper(appConfig)));
+            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OMCoreServerBootstrapper(serverContext)));
         }
     }
 }

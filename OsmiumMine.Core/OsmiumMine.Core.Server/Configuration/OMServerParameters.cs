@@ -13,7 +13,10 @@ namespace OsmiumMine.Core.Server.Configuration
         [JsonProperty("omconfig")]
         public OMDatabaseConfiguration OMConfig { get; set; } = new OMDatabaseConfiguration();
 
-        //[JsonProperty("apiKeys")]
-        //public ApiAccessKey[] ApiKeys { get; set; } = new ApiAccessKey[0];
+        /// <summary>
+        /// Master API keys. These will also be stored in the state but will not be duplicated.
+        /// </summary>
+        [JsonProperty("apikeys")]
+        public ApiAccessKey[] ApiKeys { get; set; } = new ApiAccessKey[0];
     }
 }
