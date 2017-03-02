@@ -6,9 +6,9 @@ namespace OsmiumMine.Core.Server.Services.Authentication
 {
     public class ClientAuthenticationService
     {
-        public IOMCoreServerConfiguration Configuration { get; set; }
+        public IOMServerContext Configuration { get; set; }
 
-        public ClientAuthenticationService(IOMCoreServerConfiguration configuration)
+        public ClientAuthenticationService(IOMServerContext configuration)
         {
             Configuration = configuration;
         }

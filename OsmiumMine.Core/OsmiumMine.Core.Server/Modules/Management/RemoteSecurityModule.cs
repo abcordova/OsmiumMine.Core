@@ -16,9 +16,9 @@ namespace OsmiumMine.Core.Server.Modules.Management
 {
     public class RemoteSecurityModule : OsmiumMineServerModule
     {
-        public IOMCoreServerConfiguration OMServerConfiguration { get; set; }
+        public IOMServerContext OMServerConfiguration { get; set; }
 
-        public RemoteSecurityModule(IOMCoreServerConfiguration omConfiguration) : base("/rsec")
+        public RemoteSecurityModule(IOMServerContext omConfiguration) : base("/rsec")
         {
             OMServerConfiguration = omConfiguration;
 
@@ -71,11 +71,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
+                var dbRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 foreach (var dbRule in dbRules)
                 {
@@ -97,11 +97,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
+                var dbRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 var removed = false;
                 foreach (var dbRule in dbRules)
@@ -126,11 +126,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var dbRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid];
+                var dbRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid];
                 // remove all rules that match the given path
                 SecurityRule foundRule = null;
                 foreach (var dbRule in dbRules)
@@ -151,11 +151,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
-                var matchingRules = OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
+                var matchingRules = OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
                 return Response.AsJsonNet(matchingRules);
             });
         }
@@ -182,12 +182,12 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 {
                     return HttpStatusCode.BadRequest;
                 }
-                if (!OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.ContainsKey(dbid))
+                if (!OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
-                    OMServerConfiguration.OMContext.Configuration.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
+                    OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable.Add(dbid, new SecurityRuleCollection());
                 }
                 var rule = new SecurityRule(new Regex(path), ruleFlags, allowRule, priority);
-                OMServerConfiguration.OMContext.Configuration.SecurityRuleTable[dbid].Add(rule);
+                OMServerConfiguration.OMContext.ServiceState.SecurityRuleTable[dbid].Add(rule);
                 return Response.AsJsonNet(rule);
             });
         }

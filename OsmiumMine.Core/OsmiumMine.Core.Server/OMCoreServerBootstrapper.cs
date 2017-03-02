@@ -9,9 +9,9 @@ namespace OsmiumMine.Core.Server
 {
     public class OMCoreServerBootstrapper : DefaultNancyBootstrapper
     {
-        public OMCoreServerConfiguration OMConfiguration { get; set; }
+        public OMServerContext OMConfiguration { get; set; }
 
-        public OMCoreServerBootstrapper(OMCoreServerConfiguration configuration)
+        public OMCoreServerBootstrapper(OMServerContext configuration)
         {
             OMConfiguration = configuration;
         }
@@ -38,7 +38,7 @@ namespace OsmiumMine.Core.Server
         {
             base.ConfigureApplicationContainer(container);
 
-            container.Register<IOMCoreServerConfiguration>(OMConfiguration);
+            container.Register<IOMServerContext>(OMConfiguration);
         }
     }
 }

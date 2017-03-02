@@ -17,9 +17,9 @@ namespace OsmiumMine.Core.Server.Modules.Database
 {
     public class RemoteIOModule : OsmiumMineServerModule
     {
-        public IOMCoreServerConfiguration OMServerConfiguration { get; set; }
+        public IOMServerContext OMServerConfiguration { get; set; }
 
-        public RemoteIOModule(IOMCoreServerConfiguration omConfiguration) : base("/io")
+        public RemoteIOModule(IOMServerContext omConfiguration) : base("/io")
         {
             OMServerConfiguration = omConfiguration;
 

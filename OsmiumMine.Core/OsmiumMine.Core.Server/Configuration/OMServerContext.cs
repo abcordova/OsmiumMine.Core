@@ -2,13 +2,13 @@
 
 namespace OsmiumMine.Core.Server.Configuration
 {
-    public class OMCoreServerConfiguration : IOMCoreServerConfiguration
+    public class OMServerContext : IOMServerContext
     {
         public OMServerParameters Parameters { get; set; }
         public OsmiumMineContext OMContext { get; set; }
         public KeyValueDatabaseService KeyValueDbService { get; set; }
 
-        public OMCoreServerConfiguration(OMServerParameters parameters)
+        public OMServerContext(OMServerParameters parameters)
         {
             Parameters = parameters;
         }

@@ -36,10 +36,10 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
         {
             // Check permissions
             dbRequest.State = PermissionState.Denied;
-            if (Context.Configuration.SecurityRuleTable.ContainsKey(dbRequest.DatabaseId))
+            if (Context.ServiceState.SecurityRuleTable.ContainsKey(dbRequest.DatabaseId))
             {
                 // Rules are sorted in ascending priority order
-                foreach (var rule in Context.Configuration.SecurityRuleTable[dbRequest.DatabaseId])
+                foreach (var rule in Context.ServiceState.SecurityRuleTable[dbRequest.DatabaseId])
                 {
                     if (rule.PathRegex.Match($"/{dbRequest.Path}").Success)
                     {
