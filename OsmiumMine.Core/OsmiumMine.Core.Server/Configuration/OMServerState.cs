@@ -16,9 +16,16 @@ namespace OsmiumMine.Core.Server.Configuration
         // Proxy to context
         public OMDbServiceState DbServiceState { get; set; }
 
+        /// <summary>
+        /// BsonDocument ID
+        /// </summary>
+        [BsonId]
+        public ObjectId DatabaseId { get; set; }
+
         [BsonIgnore]
         public LiteCollection<OMServerState> PersistenceMedium { get; set; }
 
+        [BsonIgnore]
         public Action Persist { get; set; }
     }
 }
