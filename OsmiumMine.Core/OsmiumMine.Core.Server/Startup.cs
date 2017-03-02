@@ -7,6 +7,7 @@ using Nancy.Owin;
 using OsmiumMine.Core.Configuration;
 using OsmiumMine.Core.Server.Configuration;
 using System.IO;
+using System;
 
 namespace OsmiumMine.Core.Server
 {
@@ -16,6 +17,7 @@ namespace OsmiumMine.Core.Server
         public const string ServerStateStorageFileName = "omserver_state.lidb";
 
         private readonly IConfigurationRoot config;
+        private OMServerContext serverContext;
 
         public Startup(IHostingEnvironment env)
         {
@@ -37,7 +39,7 @@ namespace OsmiumMine.Core.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime)
         {
             loggerFactory.AddConsole();
 
@@ -54,11 +56,20 @@ namespace OsmiumMine.Core.Server
             // Bind configuration file data to server parameters
             config.Bind(serverParameters);
             // Create a server context from the parameters
-            var serverContext = OMServerConfigurator.CreateContext(serverParameters);
+            serverContext = OMServerConfigurator.CreateContext(serverParameters);
             // Load persistent state data
             OMServerConfigurator.LoadState(serverContext, ServerStateStorageFileName);
 
+            // Register shutdown
+            applicationLifetime.ApplicationStopping.Register(OnShutdown);
+
             app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OMCoreServerBootstrapper(serverContext)));
+        }
+
+        private void OnShutdown()
+        {
+            // Persist server state
+            serverContext.ServerState.Persist();
         }
     }
 }
