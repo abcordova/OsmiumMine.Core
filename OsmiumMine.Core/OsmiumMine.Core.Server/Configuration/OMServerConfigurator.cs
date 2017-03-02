@@ -7,7 +7,7 @@
             // Load the configuration
             var config = new OMCoreServerConfiguration(parameters)
             {
-                OMContext = new OsmiumMineContext()
+                OMContext = new OsmiumMineContext
                 {
                     Configuration = parameters.OMConfig
                 }

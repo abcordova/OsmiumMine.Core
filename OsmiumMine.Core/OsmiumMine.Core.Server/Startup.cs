@@ -11,7 +11,7 @@ namespace OsmiumMine.Core.Server
 {
     public class Startup
     {
-        private readonly IConfiguration config;
+        private readonly IConfigurationRoot config;
 
         public Startup(IHostingEnvironment env)
         {
@@ -26,6 +26,9 @@ namespace OsmiumMine.Core.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // Adds services required for using options.
+            services.AddOptions();
+            // Register IConfiguration
             services.Configure<OMCoreServerParameters>(config);
         }
 
