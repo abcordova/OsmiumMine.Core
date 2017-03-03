@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using OsmiumMine.Core.Configuration;
 using OsmiumMine.Core.Server.Configuration.Access;
 
@@ -18,5 +19,8 @@ namespace OsmiumMine.Core.Server.Configuration
         /// </summary>
         [JsonProperty("apikeys")]
         public ApiAccessKey[] ApiKeys { get; set; } = new ApiAccessKey[0];
+
+        [JsonProperty("corsOrigins")]
+        public string[] CorsOrigins { get; set; } = new string[0];
     }
 }
