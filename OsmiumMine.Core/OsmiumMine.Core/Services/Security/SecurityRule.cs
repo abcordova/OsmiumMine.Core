@@ -39,6 +39,14 @@ namespace OsmiumMine.Core.Services.Security
         public string Id { get; set; }
 
         /// <summary>
+        /// Empty constructor. Avoid using this constructor, it is only for deserializers.
+        /// </summary>
+        [JsonConstructor]
+        public SecurityRule()
+        {
+        }
+
+        /// <summary>
         /// Creates a new security rule
         /// </summary>
         /// <param name="pathWildcard"></param>
