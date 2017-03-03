@@ -1,5 +1,6 @@
 ## Application Configuration
 omserver.json
+*.lidb
 
 debug.log
 

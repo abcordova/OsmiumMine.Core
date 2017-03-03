@@ -63,7 +63,7 @@ For example, you could store this data in the database:
 ```
 
 Then, querying `/internet/map/foo.json` would give you the JSON
-value of `foo`.
+value of `foo`. Querying `/internet/websites` would give the `websites` array.
 
 After sending an UPDATE request to `/internet/map/foo` with the following data:
 

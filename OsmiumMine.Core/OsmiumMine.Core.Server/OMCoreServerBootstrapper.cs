@@ -9,16 +9,16 @@ namespace OsmiumMine.Core.Server
 {
     public class OMCoreServerBootstrapper : DefaultNancyBootstrapper
     {
-        public OMCoreServerConfiguration OMConfiguration { get; set; }
+        public OMServerContext OMServerContext { get; set; }
 
-        public OMCoreServerBootstrapper(OMCoreServerConfiguration configuration)
+        public OMCoreServerBootstrapper(OMServerContext serverContext)
         {
-            OMConfiguration = configuration;
+            OMServerContext = serverContext;
         }
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            OMConfiguration.ConnectOsmiumMine();
+            OMServerContext.ConnectOsmiumMine();
             
             // Enable authentication
             StatelessAuthentication.Enable(pipelines, new StatelessAuthenticationConfiguration(ctx =>
@@ -27,9 +27,21 @@ namespace OsmiumMine.Core.Server
                 var apiKey = (string)ctx.Request.Query.apikey.Value;
 
                 // get user identity
-                var authenticator = new ClientAuthenticationService(OMConfiguration);
+                var authenticator = new ClientAuthenticationService(OMServerContext);
                 return authenticator.ResolveClientIdentity(apiKey);
             }));
+
+            // Enable CORS
+            pipelines.AfterRequest.AddItemToEndOfPipeline((ctx) =>
+            {
+                foreach (var origin in OMServerContext.Parameters.CorsOrigins)
+                {
+                    ctx.Response.WithHeader("Access-Control-Allow-Origin", origin);
+                }
+                ctx.Response
+                    .WithHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE")
+                    .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
+            });
 
             base.ApplicationStartup(container, pipelines);
         }
@@ -38,7 +50,7 @@ namespace OsmiumMine.Core.Server
         {
             base.ConfigureApplicationContainer(container);
 
-            container.Register<IOMCoreServerConfiguration>(OMConfiguration);
+            container.Register<IOMServerContext>(OMServerContext);
         }
     }
 }

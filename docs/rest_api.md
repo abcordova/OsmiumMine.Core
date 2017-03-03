@@ -1,7 +1,7 @@
 
 # OsmiumMine Core REST API Documentation
 
-Version 0.1.1
+Version 0.1.2
 
 Copyright &copy; 2016-2017 Nihal Talur (0xFireball), IridiumIon Software. All Rights Reserved.
 
@@ -211,8 +211,7 @@ Query string:
 
 Description:
 
-Creates a security rule with the specified parameters and stores it in memory.
-Note that these rules will not persist after a server restart.
+Creates a security rule with the specified parameters and stores it in the persistent database state.
 
 Result notes:
 
@@ -238,8 +237,7 @@ Query string:
 
 Description:
 
-Any security rule matching the ID will be removed. Please note
-that these changes will not persist after a server restart.
+Any security rule matching the ID will be removed. Changes will be stored to the persistent database state.
 
 Result notes:
 
@@ -264,8 +262,7 @@ Query string:
 
 Description:
 
-All security rules matching the specified path will be deleted. Please note
-that these changes will not persist after a server restart.
+All security rules matching the specified path will be deleted. Changes will be stored to the persistent database state.
 
 ##### Enumerating Rules
 
@@ -291,3 +288,28 @@ All security rules matching the specified path will be returned in a JSON array.
 Result notes:
 
 A JSON array containing rules will be returned.
+
+##### Retrieving a single rule
+
+Request:
+
+`GET`
+`/rules/get/{dbid}`
+
+Parameters:
+
+URL:
+
+- `dbid` - the database realm to access
+
+Query string:
+
+- `id` - the rule id
+
+Description:
+
+The first security rule matching the specified path will be returned as a JSON object.
+
+Result notes:
+
+The rule will be returned as a JSON object.

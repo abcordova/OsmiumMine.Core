@@ -6,16 +6,16 @@ namespace OsmiumMine.Core.Server.Services.Authentication
 {
     public class ClientAuthenticationService
     {
-        public IOMCoreServerConfiguration Configuration { get; set; }
+        public IOMServerContext ServerContext { get; set; }
 
-        public ClientAuthenticationService(IOMCoreServerConfiguration configuration)
+        public ClientAuthenticationService(IOMServerContext serverContext)
         {
-            Configuration = configuration;
+            ServerContext = serverContext;
         }
 
         public ClaimsPrincipal ResolveClientIdentity(string apiKey)
         {
-            var currentKey = Configuration.Parameters.ApiKeys.FirstOrDefault(x => x.Key == apiKey);
+            var currentKey = ServerContext.ServerState.ApiKeys.FirstOrDefault(x => x.Key == apiKey);
             if (currentKey != null)
             {
                 // Give client identity

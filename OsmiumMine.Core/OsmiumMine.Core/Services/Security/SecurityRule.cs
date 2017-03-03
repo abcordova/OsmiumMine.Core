@@ -18,7 +18,7 @@ namespace OsmiumMine.Core.Services.Security
         /// Compiled path regex
         /// </summary>
         [JsonProperty("pathRegex")]
-        public Regex PathRegex { get; private set; }
+        public Regex PathRegex { get; set; }
 
         /// <summary>
         /// The actions that this rule applies to
@@ -27,17 +27,20 @@ namespace OsmiumMine.Core.Services.Security
         public DatabaseAction Actions { get; set; }
 
         [JsonProperty("priority")]
-        public int Priority { get; }
+        public int Priority { get; set; }
 
         [JsonProperty("allow")]
-        public bool Allow { get; }
+        public bool Allow { get; set; }
 
         /// <summary>
         /// A unique identifier for the rule
         /// </summary>
         [JsonProperty("id")]
-        public string Id { get; }
+        public string Id { get; set; }
 
+        /// <summary>
+        /// Empty constructor. Avoid using this constructor, it is only for deserializers.
+        /// </summary>
         [JsonConstructor]
         public SecurityRule()
         {

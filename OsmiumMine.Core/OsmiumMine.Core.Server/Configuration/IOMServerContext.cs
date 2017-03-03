@@ -2,10 +2,11 @@
 
 namespace OsmiumMine.Core.Server.Configuration
 {
-    public interface IOMCoreServerConfiguration
+    public interface IOMServerContext
     {
-        OMCoreServerParameters Parameters { get; set; }
+        OMServerParameters Parameters { get; set; }
         OsmiumMineContext OMContext { get; set; }
         KeyValueDatabaseService KeyValueDbService { get; set; }
+        OMServerState ServerState { get; set; }
     }
 }

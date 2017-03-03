@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using static OsmiumMine.Core.Services.DynDatabase.Access.DynDatabaseRequest;
 
 namespace OsmiumMine.Core.Services.DynDatabase.Access
@@ -36,10 +37,10 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
         {
             // Check permissions
             dbRequest.State = PermissionState.Denied;
-            if (Context.Configuration.SecurityRuleTable.ContainsKey(dbRequest.DatabaseId))
+            if (Context.DbServiceState.SecurityRuleTable.ContainsKey(dbRequest.DatabaseId))
             {
                 // Rules are sorted in ascending priority order
-                foreach (var rule in Context.Configuration.SecurityRuleTable[dbRequest.DatabaseId])
+                foreach (var rule in Context.DbServiceState.SecurityRuleTable[dbRequest.DatabaseId].OrderBy(x => x.Priority))
                 {
                     if (rule.PathRegex.Match($"/{dbRequest.Path}").Success)
                     {
