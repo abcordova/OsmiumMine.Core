@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using OsmiumMine.Core.Configuration;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OsmiumMine.Core.Server.Configuration
 {
@@ -21,8 +22,22 @@ namespace OsmiumMine.Core.Server.Configuration
 
         public const string StateStorageKey = "state";
 
+        public static bool DatabaseMappersRegistered { get; private set; }
+
+        public static void RegisterDatabaseMappers()
+        {
+            // Register a Regex BSONMapper
+            BsonMapper.Global.RegisterType<Regex>(
+                serialize: r => r.ToString(),
+                deserialize: d => new Regex(d.AsString)
+            );
+            DatabaseMappersRegistered = true;
+        }
+
         public static void LoadState(OMServerContext serverContext, string stateStorageFile)
         {
+            // Register mappers
+            if (!DatabaseMappersRegistered) RegisterDatabaseMappers();
             // Load the Server State into the context. This object also includes the OsmiumMine Core state
             var database = new LiteDatabase(stateStorageFile);
             var stateStorage = database.GetCollection<OMServerState>(StateStorageKey);
