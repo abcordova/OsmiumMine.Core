@@ -32,7 +32,7 @@ See the `docs/` directory for REST API documentation. Language client API docume
     - API keys with limited permissions can be created and revoked
   - Security Rules for limiting operations in specified paths
     - Make a section read-only or write-only
-    - JS Expressions for dynamic data validation
+    - JS Expressions for dynamic data validation (**)
 - Portable and Accessible
   - Built on .NET Core, so easily runs on any platform
   - Fully-featured REST API (see the documentation)
