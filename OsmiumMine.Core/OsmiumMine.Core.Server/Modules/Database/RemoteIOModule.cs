@@ -17,11 +17,11 @@ namespace OsmiumMine.Core.Server.Modules.Database
 {
     public class RemoteIOModule : OsmiumMineServerModule
     {
-        public IOMServerContext OMServerConfiguration { get; set; }
+        public IOMServerContext ServerContext { get; set; }
 
-        public RemoteIOModule(IOMServerContext omConfiguration) : base("/io")
+        public RemoteIOModule(IOMServerContext serverContext) : base("/io")
         {
-            OMServerConfiguration = omConfiguration;
+            ServerContext = serverContext;
 
             var pathRoutes = new[] { @"^(?:(?<dbid>[\w]+)\/(?<path>.*?)(?=\.json))" };
             foreach (var pathRoute in pathRoutes)
@@ -79,7 +79,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             }
 
             // Write data
-            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(ServerContext.KeyValueDbService);
             var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Put);
 
             // Return data written
@@ -107,7 +107,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             }
 
             // Write data
-            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(ServerContext.KeyValueDbService);
             var placeResult = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Update);
 
             // Return data written
@@ -135,7 +135,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             }
 
             // Write data
-            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(ServerContext.KeyValueDbService);
             var pushId = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Push);
 
             // Return data written
@@ -147,7 +147,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             var dbRequest = (DynDatabaseRequest)CreateDatabaseRequest(args, DatabaseAction.Delete);
             if (dbRequest.State == PermissionState.Denied) return HttpStatusCode.Unauthorized;
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
-            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(ServerContext.KeyValueDbService);
             await dynDbService.DeleteData(dbRequest);
 
             return Response.FromJsonString(new JObject().ToString());
@@ -160,7 +160,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             if (!dbRequest.Valid) return HttpStatusCode.BadRequest;
             // Read query parameters
             var shallow = (string)Request.Query.shallow == "1";
-            var dynDbService = new DynamicDatabaseService(OMServerConfiguration.KeyValueDbService);
+            var dynDbService = new DynamicDatabaseService(ServerContext.KeyValueDbService);
             var dataBundle = await dynDbService.GetData(dbRequest, shallow);
 
             if (dataBundle == null)
@@ -181,12 +181,12 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private RequestProcessor CreateRequestProcessor()
         {
-            var processor = new RequestProcessor(OMServerConfiguration.OMContext)
+            var processor = new RequestProcessor(ServerContext.OMContext)
             {
                 AuthTokenValidator = accessRequest =>
                 {
                     // get key identity
-                    var authenticator = new ClientAuthenticationService(OMServerConfiguration);
+                    var authenticator = new ClientAuthenticationService(ServerContext);
                     var identity = authenticator.ResolveClientIdentity(accessRequest.AuthToken);
                     if (identity == null) return false;
                     var accessValidator = new ClientApiAccessValidator();
