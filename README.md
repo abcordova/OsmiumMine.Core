@@ -16,6 +16,32 @@ as a standalone application without AlphaOsmium.
 
 See the `docs/` directory for REST API documentation. Language client API documentation will be available separately.
 
+## Key Features
+
+- Realtime:
+  - High-performance cloud hosted NoSQL JSON trees
+    - Backed by Redis, the extremely fast yet standard underlying data storage layer
+  - Updates are synchronized in milliseconds among all connected devices (*)
+    - Client API to stream updates in realtime
+    - Local offline cache of data and transactions
+- Schemaless
+  - Data can be structured in any way inside the database
+  - Full support for dynamic data storage
+- Security
+  - First-class API key support
+    - API keys with limited permissions can be created and revoked
+  - Security Rules for limiting operations in specified paths
+    - Make a section read-only or write-only
+    - JS Expressions for dynamic data validation
+- Portable and Accessible
+  - Built on .NET Core, so easily runs on any platform
+  - Fully-featured REST API (see the documentation)
+  - Web UI (*)
+
+\* - Only available in AlphaOsmium Edition
+
+\** - Currently only available in AlphaOsmium Edition, but will be ported back to this edition
+
 ## Quick Overview
 
 OsmiumMine provides a remotely syncing JSON tree. The documentation contains
