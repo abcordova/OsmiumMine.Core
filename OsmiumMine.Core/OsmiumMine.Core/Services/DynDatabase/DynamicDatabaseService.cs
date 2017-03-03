@@ -26,26 +26,27 @@ namespace OsmiumMine.Core.Services.DynDatabase
             DbService = keyValueDatabase;
         }
 
-        public async Task<string> PlaceData(JObject dataBundleRoot, DynDatabaseRequest request, NodeDataOvewriteMode overwriteMode, bool response = true)
+        public async Task<string> PlaceData(JObject dataBundle, DynDatabaseRequest request, NodeDataOvewriteMode overwriteMode, bool shouldRespond = true)
         {
             var realmDomain = DbService.GetDomainPath(request.DatabaseId);
-            string result = null; // Optionally used to return a result
+            string responseResult = null; // Optionally used to return a result
             var dataPath = new FlatJsonPath(request.Path);
+            var resultData = string.Empty;
             await Task.Run(() =>
             {
                 // Parse server values
-                if (dataBundleRoot.Children().Count() == 1
-                    && dataBundleRoot.First is JProperty
-                    && (dataBundleRoot.First as JProperty).Name == ServerValueProvider.ServerValueKeyName)
+                if (dataBundle.Children().Count() == 1
+                    && dataBundle.First is JProperty
+                    && (dataBundle.First as JProperty).Name == ServerValueProvider.ServerValueKeyName)
                 {
-                    var serverValueToken = ((JProperty)dataBundleRoot.First).Value;
+                    var serverValueToken = ((JProperty)dataBundle.First).Value;
                     var serverValueName = (serverValueToken is JValue) ? ((serverValueToken as JValue).Value as string) : null;
                     var resultValue = ServerValueProvider.GetValue(serverValueName);
                     // Now adjust path
                     // Get the last segment, then remove it
                     var lastSegment = dataPath.Segments.Last();
                     dataPath.Segments.RemoveAt(dataPath.Segments.Count - 1);
-                    dataBundleRoot = new JObject(new JProperty(lastSegment, resultValue));
+                    dataBundle = new JObject(new JProperty(lastSegment, resultValue));
                 }
 
                 // Put in the new data
@@ -54,12 +55,13 @@ namespace OsmiumMine.Core.Services.DynDatabase
                     case NodeDataOvewriteMode.Update:
                         {
                             // Flatten input bundle
-                            var flattenedBundle = new FlatJsonObject(dataBundleRoot, dataPath.TokenPrefix);
+                            var flattenedBundle = new FlatJsonObject(dataBundle, dataPath.TokenPrefix);
                             // Merge input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
                                 DbService.Store.Set(realmDomain, kvp.Key, kvp.Value);
                             }
+                            resultData = dataBundle.ToString();
                         }
 
                         break;
@@ -69,7 +71,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             // Flatten input bundle
                             var dataTokenPrefix = dataPath.TokenPrefix;
                             // Get existing data
-                            var flattenedBundle = new FlatJsonObject(dataBundleRoot, dataTokenPrefix);
+                            var flattenedBundle = new FlatJsonObject(dataBundle, dataTokenPrefix);
                             var existingData = DbService.Store.GetKeys(realmDomain).Where(x => x.StartsWith(dataTokenPrefix, StringComparison.Ordinal));
                             // Remove existing data
                             foreach (var key in existingData)
@@ -81,6 +83,7 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             {
                                 DbService.Store.Set(realmDomain, kvp.Key, kvp.Value);
                             }
+                            resultData = dataBundle.ToString();
                         }
                         break;
 
@@ -91,22 +94,25 @@ namespace OsmiumMine.Core.Services.DynDatabase
                             // Create flattened bundle with pushId added to prefix
                             dataPath.Segments.Add(pushId);
                             // Flatten input bundle
-                            var flattenedBundle = new FlatJsonObject(dataBundleRoot, dataPath.TokenPrefix);
+                            var flattenedBundle = new FlatJsonObject(dataBundle, dataPath.TokenPrefix);
                             // Merge input bundle
                             foreach (var kvp in flattenedBundle.Dictionary)
                             {
                                 DbService.Store.Set(realmDomain, kvp.Key, kvp.Value);
                             }
+                            var pushResultBundle = new JObject(new JProperty("name", pushId));
+                            resultData = pushResultBundle.ToString();
                         }
                         break;
                 }
 
-                var dataBundleJson = dataBundleRoot.ToString();
-
-                // Data was written
-                if (response) result = dataBundleJson;
+                // If response is requested, return the result data
+                if (shouldRespond)
+                {
+                    responseResult = resultData;
+                }
             });
-            return result;
+            return responseResult;
         }
 
         public async Task DeleteData(DynDatabaseRequest request)

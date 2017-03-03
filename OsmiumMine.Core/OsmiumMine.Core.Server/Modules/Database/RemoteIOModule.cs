@@ -136,10 +136,10 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
             // Write data
             var dynDbService = new DynamicDatabaseService(ServerContext.KeyValueDbService);
-            var pushId = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Push);
+            var pushResult = await dynDbService.PlaceData(dataBundle, dbRequest, NodeDataOvewriteMode.Push);
 
-            // Return data written
-            return Response.AsJsonNet(new { name = pushId });
+            // Return push result bundle
+            return Response.FromJsonString(pushResult);
         }
 
         private async Task<Response> HandleDeleteDataAsync(dynamic args)
