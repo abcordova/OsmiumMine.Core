@@ -5,7 +5,7 @@ namespace OsmiumMine.Core.Utilities
     /// <summary>
     /// Thank you https://gist.github.com/kiliman/ca1d9f4135078a6b24c5005113bbeea4!
     /// </summary>
-    public class PushIdGenerator
+    public static class PushIdGenerator
     {
         /**
          * Fancy ID generator that creates 20-character string identifiers with the following properties:
