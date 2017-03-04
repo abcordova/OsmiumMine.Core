@@ -38,5 +38,8 @@ namespace OsmiumMine.Core.Server.Configuration.Access
 
         [JsonProperty("rules")]
         public List<SecurityRule> SecurityRules { get; set; } = new List<SecurityRule>();
+
+        [JsonProperty("realms")]
+        public List<string> AllowedRealms { get; set; } = new List<string>();
     }
 }
