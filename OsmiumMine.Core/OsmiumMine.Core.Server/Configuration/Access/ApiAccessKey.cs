@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using OsmiumMine.Core.Services.Security;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace OsmiumMine.Core.Server.Configuration.Access
@@ -33,5 +35,8 @@ namespace OsmiumMine.Core.Server.Configuration.Access
 
         [JsonProperty("accessScopes")]
         public ApiAccessScope[] AccessScopes { get; set; } = new ApiAccessScope[0];
+
+        [JsonProperty("rules")]
+        public List<SecurityRule> SecurityRules { get; set; } = new List<SecurityRule>();
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OsmiumMine.Core.Services.Security;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using static OsmiumMine.Core.Services.DynDatabase.Access.DynDatabaseRequest;
 
@@ -31,6 +33,27 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
             };
 
             return ValidateAccess(dbRequest);
+        }
+
+        /// <summary>
+        /// Used to validate additional security rules in the post-processing stage (key-specific rules for example)
+        /// </summary>
+        /// <returns></returns>
+        public DynDatabaseRequest ValidateAdditionalRules(DynDatabaseRequest dbRequest, IEnumerable<SecurityRule> rules)
+        {
+            // Rules are sorted in ascending priority order
+            foreach (var rule in rules.OrderBy(x => x.Priority))
+            {
+                if (rule.PathRegex.Match($"/{dbRequest.Path}").Success)
+                {
+                    if (rule.Actions.HasFlag(dbRequest.RequestedAction))
+                    {
+                        dbRequest.State = rule.Allow ? PermissionState.Granted : PermissionState.Denied;
+                        break;
+                    }
+                }
+            }
+            return dbRequest;
         }
 
         public DynDatabaseRequest ValidateAccess(DynDatabaseRequest dbRequest)
