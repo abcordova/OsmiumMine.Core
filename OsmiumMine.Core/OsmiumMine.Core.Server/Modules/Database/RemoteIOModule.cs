@@ -193,7 +193,15 @@ namespace OsmiumMine.Core.Server.Modules.Database
                 if (!accessKey.AllowedRealms.Contains(accessRequest.DatabaseId)) return false;
                 // check more rules
                 if (processor.ValidateAdditionalRules(accessRequest, accessKey.SecurityRules).Granted) return true;
-                
+                // only check admin
+                var accessValidator = new ClientApiAccessValidator();
+                if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
+                                ApiAccessScope.Admin
+                        }), accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
+                {
+                    return true;
+                }
+
                 return false;
             };
 
