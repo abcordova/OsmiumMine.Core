@@ -28,12 +28,15 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 ApiAccessScope.Admin
             }), accessValidator.GetAccessClaim(ApiAccessScope.Admin));
 
-            // Security setup
+            // Rule management
             Post("/rules/create/{dbid}", HandleCreateRuleRequestAsync);
             Delete("/rules/clear/{dbid}", HandleClearRulesRequestAsync);
             Delete("/rules/delete/{dbid}", HandleDeleteRuleRequestAsync);
             Get("/rules/list/{dbid}", HandleGetRuleListRequestAsync);
             Get("/rules/get/{dbid}", HandleGetRuleByIdRequestAsync);
+
+            // API key management
+            Post("/keys/create", HandleCreateKeyRequestAsync);
 
             // Persist state after successful request
             After += ctx =>
@@ -45,7 +48,22 @@ namespace OsmiumMine.Core.Server.Modules.Management
             };
         }
 
-        private static (string, string) ParseRequestArgs(dynamic args, Request request, bool parsePathPattern = true)
+        private async Task<Response> HandleCreateKeyRequestAsync(dynamic arg)
+        {
+            // Parameters:
+
+            return await Task.Run(() =>
+            {
+                
+            });
+        }
+
+        private static void ParseKeyRequestArgs(dynamic args)
+        {
+            // TODO
+        }
+
+        private static (string, string) ParseRulesRequestArgs(dynamic args, Request request, bool parsePathPattern = true)
         {
             var dbid = (string)args.dbid;
             var path = (string)request.Query.path;
@@ -79,7 +97,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
@@ -103,7 +121,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             return await Task.Run(() =>
             {
                 // Path is not necessary for this operation
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
@@ -132,7 +150,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             return await Task.Run(() =>
             {
                 // Path is not necessary for this operation
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
@@ -159,7 +177,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
@@ -174,7 +192,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRequestArgs((DynamicDictionary)args, Request);
+                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request);
                 if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
                 var allowRule = (string)Request.Query.allow == "1"; // whether the rule should set allow to true
                 int priority = -1;
