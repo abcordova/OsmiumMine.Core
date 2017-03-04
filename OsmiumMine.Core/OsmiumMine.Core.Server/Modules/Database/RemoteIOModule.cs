@@ -195,9 +195,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
                 if (processor.ValidateAdditionalRules(accessRequest, accessKey.SecurityRules).Granted) return true;
                 // only check admin
                 var accessValidator = new ClientApiAccessValidator();
-                if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
-                                ApiAccessScope.Admin
-                        }), accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
+                if (identity.EnsureClaim(accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
                 {
                     return true;
                 }
