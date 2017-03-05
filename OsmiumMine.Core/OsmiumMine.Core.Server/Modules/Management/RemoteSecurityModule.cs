@@ -36,7 +36,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             Get("/rules/get/{dbid}", HandleGetRuleByIdRequestAsync);
 
             // API key management
-            Post("/keys/create", HandleCreateKeyRequestAsync);
+            Post("/keys/create/{keyid}", HandleCreateKeyRequestAsync);
 
             // Persist state after successful request
             After += ctx =>
@@ -48,13 +48,14 @@ namespace OsmiumMine.Core.Server.Modules.Management
             };
         }
 
-        private async Task<Response> HandleCreateKeyRequestAsync(dynamic arg)
+        private async Task<Response> HandleCreateKeyRequestAsync(dynamic args)
         {
             // Parameters:
-
+            var keyid = ((string)args.key);
+            var realms = ((string)Request.Query.realms).Split('|');
             return await Task.Run(() =>
             {
-                
+                return HttpStatusCode.BadRequest; // TODO
             });
         }
 
