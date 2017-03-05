@@ -10,6 +10,5 @@ namespace OsmiumMine.Core.Configuration
         public int RedisPort { get; set; } = 6379;
         public string RedisAddress { get; set; } = IPAddress.Loopback.MapToIPv4().ToString();
         public string RedisPrefix { get; set; } = "osmiummine.";
-        public string RedisConnectionString => $"{RedisAddress}:{RedisPort}";
     }
 }

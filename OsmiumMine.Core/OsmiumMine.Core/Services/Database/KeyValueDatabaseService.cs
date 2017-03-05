@@ -10,7 +10,7 @@ namespace OsmiumMine.Core.Services.Database
         public KeyValueDatabaseService(OsmiumMineContext context)
         {
             Context = context;
-            Store = new RedisDatabase(Context.Configuration.RedisConnectionString);
+            Store = new RedisDatabase(Context.Configuration.RedisAddress, Context.Configuration.RedisPort);
         }
 
         /// <summary>
