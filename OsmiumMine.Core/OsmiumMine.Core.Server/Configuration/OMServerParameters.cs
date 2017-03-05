@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using OsmiumMine.Core.Configuration;
 using OsmiumMine.Core.Server.Configuration.Access;
 
