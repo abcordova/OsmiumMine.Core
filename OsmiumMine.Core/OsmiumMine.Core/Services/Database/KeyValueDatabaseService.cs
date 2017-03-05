@@ -1,4 +1,6 @@
-﻿using OsmiumMine.Core.Services.Database.Redis;
+﻿using System.Collections.Generic;
+using OsmiumMine.Core.Configuration;
+using OsmiumMine.Core.Services.Database.Redis;
 
 namespace OsmiumMine.Core.Services.Database
 {
@@ -10,7 +12,29 @@ namespace OsmiumMine.Core.Services.Database
         public KeyValueDatabaseService(OsmiumMineContext context)
         {
             Context = context;
-            Store = new RedisDatabase(Context.Configuration.RedisConnectionString);
+
+            var commandMap = StackExchange.Redis.CommandMap.Default;
+            if (Context.Configuration.DatabaseType != OMDatabaseConfiguration.RedisDatabaseType.Redis)
+            {
+                switch (Context.Configuration.DatabaseType) {
+                    case OMDatabaseConfiguration.RedisDatabaseType.SSDB:
+                        commandMap = StackExchange.Redis.CommandMap.Create(new HashSet<string> {
+                            // see http://www.ideawu.com/ssdb/docs/redis-to-ssdb.html
+                            "ping",
+                            "get", "set", "del", "incr", "incrby", "mget", "mset", "keys", "getset", "setnx",
+                            "hget", "hset", "hdel", "hincrby", "hkeys", "hvals", "hmget", "hmset", "hlen",
+                            "zscore", "zadd", "zrem", "zrange", "zrangebyscore", "zincrby", "zdecrby", "zcard",
+                            "llen", "lpush", "rpush", "lpop", "rpop", "lrange", "lindex" , "exists"
+                        }, true);
+                        break;
+                }
+            }
+            
+            Store = new RedisDatabase(new StackExchange.Redis.ConfigurationOptions()
+            {
+                EndPoints = { { Context.Configuration.RedisAddress, Context.Configuration.RedisPort } },
+                CommandMap = commandMap
+            });
         }
 
         /// <summary>
