@@ -1,4 +1,5 @@
-﻿using OsmiumMine.Core.Services.Database.Redis;
+﻿using OsmiumMine.Core.Configuration;
+using OsmiumMine.Core.Services.Database.Redis;
 
 namespace OsmiumMine.Core.Services.Database
 {
@@ -10,7 +11,12 @@ namespace OsmiumMine.Core.Services.Database
         public KeyValueDatabaseService(OsmiumMineContext context)
         {
             Context = context;
-            Store = new RedisDatabase(Context.Configuration.RedisAddress, Context.Configuration.RedisPort);
+            
+            Store = new RedisDatabase(new StackExchange.Redis.ConfigurationOptions()
+            {
+                EndPoints = { { Context.Configuration.RedisAddress, Context.Configuration.RedisPort } },
+                CommandMap = (Context.Configuration.DatabaseType == OMDatabaseConfiguration.RedisDatabaseType.Redis) ? StackExchange.Redis.CommandMap.Default : StackExchange.Redis.CommandMap.SSDB
+            });
         }
 
         /// <summary>
