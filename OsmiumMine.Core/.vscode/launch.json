@@ -8,7 +8,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceRoot}/OsmiumMine.Core.Server/bin/Debug/netcoreapp1.1/OsmiumMine.Core.Server.dll",
             "args": [],
-            "cwd": "${workspaceRoot}",
+            "cwd": "${workspaceRoot}/OsmiumMine.Core.Server",
             "stopAtEntry": false,
             "launchBrowser": {
                 "enabled": false,
