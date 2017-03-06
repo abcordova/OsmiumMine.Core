@@ -27,11 +27,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             this.RequiresAllClaims(new[] { accessValidator.GetAccessClaim(ApiAccessScope.Admin) });
 
             // Rule management (these can also manage keys)
-            Post("/rules/create/{dbid}", HandleCreateRuleRequestAsync);
-            Delete("/rules/clear/{dbid}", HandleClearRulesRequestAsync);
-            Delete("/rules/delete/{dbid}", HandleDeleteRuleRequestAsync);
-            Get("/rules/list/{dbid}", HandleGetRuleListRequestAsync);
-            Get("/rules/get/{dbid}", HandleGetRuleByIdRequestAsync);
+            Post("/rules/create/{dbid?}", HandleCreateRuleRequestAsync);
+            Delete("/rules/clear/{dbid?}", HandleClearRulesRequestAsync);
+            Delete("/rules/delete/{dbid?}", HandleDeleteRuleRequestAsync);
+            Get("/rules/list/{dbid?}", HandleGetRuleListRequestAsync);
+            Get("/rules/get/{dbid?}", HandleGetRuleByIdRequestAsync);
 
             // API key management
             Post("/keys/create/{keyid}", HandleCreateKeyRequestAsync);
@@ -66,7 +66,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             var dbid = (string)args.dbid;
             var path = (string)request.Query.path;
-            var keyid = ((string)args.keyid);
+            var keyid = ((string)request.Query.keyid);
             var wc = (string)request.Query.wc == "1"; // whether to parse as a wildcard
             if (string.IsNullOrWhiteSpace(dbid)) dbid = null;
             if (string.IsNullOrWhiteSpace(path)) path = parsePathPattern ? WildcardMatcher.ToRegex("/*") : "/";
