@@ -26,7 +26,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             var accessValidator = new ClientApiAccessValidator();
             this.RequiresAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
                 ApiAccessScope.Admin
-            }), accessValidator.GetAccessClaim(ApiAccessScope.Admin));
+            }));
 
             // Rule management (these can also manage keys)
             Post("/rules/create/{dbid}", HandleCreateRuleRequestAsync);
