@@ -28,7 +28,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 ApiAccessScope.Admin
             }), accessValidator.GetAccessClaim(ApiAccessScope.Admin));
 
-            // Rule management
+            // Rule management (these can also manage keys)
             Post("/rules/create/{dbid}", HandleCreateRuleRequestAsync);
             Delete("/rules/clear/{dbid}", HandleClearRulesRequestAsync);
             Delete("/rules/delete/{dbid}", HandleDeleteRuleRequestAsync);
@@ -51,7 +51,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         private async Task<Response> HandleCreateKeyRequestAsync(dynamic args)
         {
             // Parameters:
-            var keyid = ((string)args.key);
+            var keyid = ((string)args.keyid);
             var realms = ((string)Request.Query.realms).Split('|');
             return await Task.Run(() =>
             {
@@ -64,15 +64,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             });
         }
 
-        private static void ParseKeyRequestArgs(dynamic args)
-        {
-            // TODO
-        }
-
-        private static (string, string) ParseRulesRequestArgs(dynamic args, Request request, bool parsePathPattern = true)
+        private static (string, string, string) ParseRulesRequestArgs(dynamic args, Request request, bool parsePathPattern = true)
         {
             var dbid = (string)args.dbid;
             var path = (string)request.Query.path;
+            var keyid = ((string)args.keyid);
             var wc = (string)request.Query.wc == "1"; // whether to parse as a wildcard
             if (string.IsNullOrWhiteSpace(dbid)) dbid = null;
             if (string.IsNullOrWhiteSpace(path)) path = parsePathPattern ? WildcardMatcher.ToRegex("/*") : "/";
@@ -96,20 +92,17 @@ namespace OsmiumMine.Core.Server.Modules.Management
                     }
                 }
             }
-            return (dbid, path);
+            return (dbid, path, keyid);
         }
 
         private async Task<Response> HandleClearRulesRequestAsync(dynamic args)
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
-                if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
-                if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
-                {
-                    ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
-                }
-                var dbRules = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid];
+                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                var ruleList = GetCurrentRuleList(dbid, keyid);
+                if (ruleList == null) return HttpStatusCode.BadRequest;
+                var dbRules = ruleList;
                 // remove all rules that match the given path
                 foreach (var dbRule in dbRules)
                 {
@@ -127,15 +120,12 @@ namespace OsmiumMine.Core.Server.Modules.Management
             return await Task.Run(() =>
             {
                 // Path is not necessary for this operation
-                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
-                if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                var ruleList = GetCurrentRuleList(dbid, keyid);
+                if (ruleList == null) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
-                if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
-                {
-                    ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
-                }
-                var dbRules = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid];
+                var dbRules = ruleList;
                 // remove all rules that match the given path
                 var removed = false;
                 foreach (var dbRule in dbRules)
@@ -156,15 +146,12 @@ namespace OsmiumMine.Core.Server.Modules.Management
             return await Task.Run(() =>
             {
                 // Path is not necessary for this operation
-                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
-                if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                var ruleList = GetCurrentRuleList(dbid, keyid);
+                if (ruleList == null) return HttpStatusCode.BadRequest;
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
-                if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
-                {
-                    ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
-                }
-                var dbRules = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid];
+                var dbRules = ruleList;
                 // remove all rules that match the given path
                 SecurityRule foundRule = null;
                 foreach (var dbRule in dbRules)
@@ -183,23 +170,45 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
-                if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                var ruleList = GetCurrentRuleList(dbid, keyid);
+                if (ruleList == null) return HttpStatusCode.BadRequest;
+
+                var matchingRules = ruleList.Where(x => x.PathRegex.IsMatch(path));
+                return Response.AsJsonNet(matchingRules);
+            });
+        }
+
+        private List<SecurityRule> GetCurrentRuleList(string dbid, string keyid)
+        {
+            List<SecurityRule> ruleList = null;
+            if (dbid != null)
+            {
+                // Get database rules
                 if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
                 {
                     ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
                 }
-                var matchingRules = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid].Where(x => x.PathRegex.IsMatch(path));
-                return Response.AsJsonNet(matchingRules);
-            });
+                ruleList = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid];
+            }
+            else if (keyid != null)
+            {
+                // Get key rules
+                var authenticator = new ClientAuthenticationService(ServerContext);
+                var identity = authenticator.ResolveClientIdentity(keyid);
+                if (identity == null) return null;
+                var accessKey = authenticator.ResolveKey(keyid);
+            }
+            return ruleList;
         }
 
         private async Task<Response> HandleCreateRuleRequestAsync(dynamic args)
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path) = ParseRulesRequestArgs((DynamicDictionary)args, Request);
-                if (string.IsNullOrWhiteSpace(dbid)) return HttpStatusCode.BadRequest;
+                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request);
+                var ruleList = GetCurrentRuleList(dbid, keyid);
+                if (ruleList == null) return HttpStatusCode.BadRequest;
                 var allowRule = (string)Request.Query.allow == "1"; // whether the rule should set allow to true
                 int priority = -1;
                 int.TryParse((string)Request.Query.priority, out priority);
@@ -216,12 +225,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 {
                     return HttpStatusCode.BadRequest;
                 }
-                if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
-                {
-                    ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
-                }
                 var rule = new SecurityRule(new Regex(path), ruleFlags, allowRule, priority);
-                ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid].Add(rule);
+                ruleList.Add(rule);
                 return Response.AsJsonNet(rule);
             });
         }
