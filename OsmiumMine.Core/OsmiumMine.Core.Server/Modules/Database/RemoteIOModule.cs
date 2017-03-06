@@ -174,18 +174,18 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private DynDatabaseRequest CreateDatabaseRequest(dynamic args, DatabaseAction action)
         {
-            var requestProcessor = CreateRequestProcessor();
+            var requestProcessor = CreateRequestProcessor(ServerContext);
             var dbRequest = (DynDatabaseRequest)requestProcessor.Process(args, Request.Query, action);
             return dbRequest;
         }
 
-        private RequestProcessor CreateRequestProcessor()
+        public static RequestProcessor CreateRequestProcessor(IOMServerContext serverContext)
         {
-            var processor = new RequestProcessor(ServerContext.OMContext);
+            var processor = new RequestProcessor(serverContext.OMContext);
             processor.AuthTokenValidator = accessRequest =>
             {
                 // get key identity
-                var authenticator = new ClientAuthenticationService(ServerContext);
+                var authenticator = new ClientAuthenticationService(serverContext);
                 var identity = authenticator.ResolveClientIdentity(accessRequest.AuthToken);
                 if (identity == null) return false;
                 var accessKey = authenticator.ResolveKey(accessRequest.AuthToken);
