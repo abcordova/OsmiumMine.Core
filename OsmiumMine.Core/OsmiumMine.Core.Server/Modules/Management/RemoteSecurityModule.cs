@@ -35,6 +35,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
 
             // API key management
             Post("/keys/create/{keyid}", HandleCreateKeyRequestAsync);
+            Get("/keys/get/{keyid}", HandleGetKeyRequestAsync);
+            Delete("/keys/delete/{keyid}", HandleDeleteKeyRequestAsync);
 
             // Persist state after successful request
             After += ctx =>
@@ -61,8 +63,37 @@ namespace OsmiumMine.Core.Server.Modules.Management
                     Key = keyid
                 };
                 // Store key
-                ServerContext.ServerState.ApiKeys.Add(key);
+                lock (ServerContext.ServerState.ApiKeys)
+                {
+                    ServerContext.ServerState.ApiKeys.Add(key);
+                }
                 return Response.AsJsonNet(key);
+            });
+        }
+
+        private async Task<Response> HandleGetKeyRequestAsync(dynamic args)
+        {
+            return await Task.Run(() =>
+            {
+                var keyid = ((string)args.keyid);
+                var key = ServerContext.ServerState.ApiKeys.FirstOrDefault(x => x.Key == keyid);
+                if (key == null) return HttpStatusCode.NotFound;
+                return Response.AsJsonNet(key);
+            });
+        }
+
+        private async Task<Response> HandleDeleteKeyRequestAsync(dynamic args)
+        {
+            return await Task.Run(() =>
+            {
+                var keyid = ((string)args.keyid);
+                var key = ServerContext.ServerState.ApiKeys.FirstOrDefault(x => x.Key == keyid);
+                if (key == null) return HttpStatusCode.NotFound;
+                lock (ServerContext.ServerState.ApiKeys)
+                {
+                    ServerContext.ServerState.ApiKeys.Remove(key);
+                }
+                return HttpStatusCode.OK;
             });
         }
 
@@ -181,29 +212,6 @@ namespace OsmiumMine.Core.Server.Modules.Management
             });
         }
 
-        private List<SecurityRule> GetCurrentRuleList(string dbid, string keyid)
-        {
-            List<SecurityRule> ruleList = null;
-            if (dbid != null)
-            {
-                // Get database rules
-                if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
-                {
-                    ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
-                }
-                ruleList = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid];
-            }
-            else if (keyid != null)
-            {
-                // Get key rules
-                var authenticator = new ClientAuthenticationService(ServerContext);
-                var identity = authenticator.ResolveClientIdentity(keyid);
-                if (identity == null) return null;
-                var accessKey = authenticator.ResolveKey(keyid);
-            }
-            return ruleList;
-        }
-
         private async Task<Response> HandleCreateRuleRequestAsync(dynamic args)
         {
             return await Task.Run(() =>
@@ -231,6 +239,30 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 ruleList.Add(rule);
                 return Response.AsJsonNet(rule);
             });
+        }
+
+        private List<SecurityRule> GetCurrentRuleList(string dbid, string keyid)
+        {
+            List<SecurityRule> ruleList = null;
+            if (dbid != null)
+            {
+                // Get database rules
+                if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
+                {
+                    ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
+                }
+                ruleList = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid];
+            }
+            else if (keyid != null)
+            {
+                // Get key rules
+                var authenticator = new ClientAuthenticationService(ServerContext);
+                var identity = authenticator.ResolveClientIdentity(keyid);
+                if (identity == null) return null;
+                var accessKey = authenticator.ResolveKey(keyid);
+                ruleList = accessKey.SecurityRules;
+            }
+            return ruleList;
         }
     }
 }
