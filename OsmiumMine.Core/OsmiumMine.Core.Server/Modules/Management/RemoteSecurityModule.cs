@@ -55,6 +55,10 @@ namespace OsmiumMine.Core.Server.Modules.Management
             var realms = ((string)Request.Query.realms).Split('|');
             return await Task.Run(() =>
             {
+                var key = new ApiAccessKey
+                {
+                    
+                };
                 return HttpStatusCode.BadRequest; // TODO
             });
         }
