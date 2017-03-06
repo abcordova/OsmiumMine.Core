@@ -50,7 +50,9 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             // Parameters:
             var keyid = ((string)args.keyid);
-            var realms = ((string)Request.Query.realms).Split('|');
+            var realmsParam = ((string)Request.Query.realms);
+            if (realmsParam == null) return HttpStatusCode.BadRequest;
+            var realms = realmsParam.Split('|');
             return await Task.Run(() =>
             {
                 var key = new ApiAccessKey
@@ -58,6 +60,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
                     AllowedRealms = realms.ToList(),
                     Key = keyid
                 };
+                // Store key
+                ServerContext.ServerState.ApiKeys.Add(key);
                 return Response.AsJsonNet(key);
             });
         }
