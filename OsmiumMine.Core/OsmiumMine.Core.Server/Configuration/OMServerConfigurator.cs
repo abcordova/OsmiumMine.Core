@@ -60,11 +60,18 @@ namespace OsmiumMine.Core.Server.Configuration
             };
             // Merge the API keys
             var existingApiKeys = savedState.ApiKeys.Select(x => x.Key);
-            foreach (var paramApiKey in serverContext.Parameters.ApiKeys)
+            foreach (var paramKey in serverContext.Parameters.ApiKeys)
             {
-                if (!existingApiKeys.Contains(paramApiKey.Key))
+                var existingKey = serverContext.Parameters.ApiKeys.FirstOrDefault(x => x.Key == paramKey.Key);
+                if (existingKey == null)
                 {
-                    savedState.ApiKeys.Add(paramApiKey);
+                    savedState.ApiKeys.Add(paramKey);
+                }
+                else
+                {
+                    // Remove the old key and add the new key
+                    savedState.ApiKeys.Remove(existingKey);
+                    savedState.ApiKeys.Add(paramKey);
                 }
             }
             // Save the state

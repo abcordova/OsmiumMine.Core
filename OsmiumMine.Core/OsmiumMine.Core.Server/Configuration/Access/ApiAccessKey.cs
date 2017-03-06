@@ -10,12 +10,8 @@ namespace OsmiumMine.Core.Server.Configuration.Access
     /// </summary>
     public enum ApiAccessScope
     {
-        // General
-        [EnumMember(Value = "default")]
-        Default = 0,
-
-        [EnumMember(Value = "admin")]
-        Admin = 1,
+        Default,
+        Admin,
     }
 
     public class ApiAccessKey
