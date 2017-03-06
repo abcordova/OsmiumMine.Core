@@ -21,9 +21,8 @@ namespace OsmiumMine.Core.Server.Services.Authentication
             var claimList = new List<Claim>
             {
                 new Claim(AuthTypeKey, RemoteAuthTypes.StatelessKey),
+                new Claim(AccessScopeKey, accessKey.AccessScope.ToString())
             };
-            var accessScopeClaims = accessKey.AccessScope.Select(accessScope => new Claim(AccessScopeKey, accessScope.ToString()));
-            claimList.AddRange(accessScopeClaims);
             return claimList;
         }
 
@@ -47,14 +46,6 @@ namespace OsmiumMine.Core.Server.Services.Authentication
             return (ApiAccessScope)Enum.Parse(typeof(ApiAccessScope), accessScopeClaim.Value);
         }
 
-        /// <summary>
-        /// Creates a list of claims from a list of access scopes
-        /// </summary>
-        /// <param name="scopes"></param>
-        /// <returns></returns>
-        public IEnumerable<Claim> GetAccessClaimListFromScopes(ApiAccessScope[] scopes)
-        {
-            return scopes.Select(x => new Claim(AccessScopeKey, x.ToString()));
-        }
+        public Claim GetAccessScopeClaim(ApiAccessScope scope) => new Claim(AccessScopeKey, scope.ToString());
     }
 }
