@@ -1,4 +1,6 @@
-﻿namespace OsmiumMine.Core.Services.DynDatabase.Access
+﻿using Newtonsoft.Json;
+
+namespace OsmiumMine.Core.Services.DynDatabase.Access
 {
     public class DynDatabaseRequest
     {
@@ -14,5 +16,8 @@
         public bool Valid { get; internal set; }
         public PermissionState State { get; internal set; }
         public DatabaseAction RequestedAction { get; set; }
+
+        [JsonIgnore]
+        public bool Granted => State == PermissionState.Granted;
     }
 }

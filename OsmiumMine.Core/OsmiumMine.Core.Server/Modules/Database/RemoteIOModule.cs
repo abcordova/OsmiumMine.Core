@@ -181,38 +181,26 @@ namespace OsmiumMine.Core.Server.Modules.Database
 
         private RequestProcessor CreateRequestProcessor()
         {
-            var processor = new RequestProcessor(ServerContext.OMContext)
+            var processor = new RequestProcessor(ServerContext.OMContext);
+            processor.AuthTokenValidator = accessRequest =>
             {
-                AuthTokenValidator = accessRequest =>
+                // get key identity
+                var authenticator = new ClientAuthenticationService(ServerContext);
+                var identity = authenticator.ResolveClientIdentity(accessRequest.AuthToken);
+                if (identity == null) return false;
+                var accessKey = authenticator.ResolveKey(accessRequest.AuthToken);
+                // make sure realm is allowed
+                if (!accessKey.AllowedRealms.Contains(accessRequest.DatabaseId)) return false;
+                // check more rules
+                if (processor.ValidateAdditionalRules(accessRequest, accessKey.SecurityRules).Granted) return true;
+                // only check admin
+                var accessValidator = new ClientApiAccessValidator();
+                if (identity.EnsureClaim(accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
                 {
-                    // get key identity
-                    var authenticator = new ClientAuthenticationService(ServerContext);
-                    var identity = authenticator.ResolveClientIdentity(accessRequest.AuthToken);
-                    if (identity == null) return false;
-                    var accessValidator = new ClientApiAccessValidator();
-                    if ((accessRequest.RequestedAction & DatabaseAction.Write) != 0)
-                    {
-                        // Ensure write permission for write action
-                        if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
-                                ApiAccessScope.Write
-                        }), accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
-                        {
-                            return true;
-                        }
-                    }
-                    if ((accessRequest.RequestedAction & DatabaseAction.ReadLive) != 0)
-                    {
-                        // Ensure read permission for read/stream action
-                        if (identity.EnsureAllClaims(accessValidator.GetAccessClaimListFromScopes(new[] {
-                                ApiAccessScope.Read
-                        }), accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return true;
                 }
+
+                return false;
             };
 
             return processor;

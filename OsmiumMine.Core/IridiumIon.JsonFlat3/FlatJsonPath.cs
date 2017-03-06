@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace IridiumIon.JsonFlat3
@@ -9,7 +10,7 @@ namespace IridiumIon.JsonFlat3
 
         public FlatJsonPath(string uriPath)
         {
-            Segments = uriPath.Split('/').ToList();
+            Segments = uriPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
         public string TokenPath
