@@ -57,9 +57,10 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 var key = new ApiAccessKey
                 {
-                    
+                    AllowedRealms = realms.ToList(),
+                    Key = keyid
                 };
-                return HttpStatusCode.BadRequest; // TODO
+                return Response.AsJsonNet(key);
             });
         }
 

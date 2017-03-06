@@ -22,7 +22,7 @@ namespace OsmiumMine.Core.Server.Services.Authentication
             {
                 new Claim(AuthTypeKey, RemoteAuthTypes.StatelessKey),
             };
-            var accessScopeClaims = accessKey.AccessScopes.Select(accessScope => new Claim(AccessScopeKey, accessScope.ToString()));
+            var accessScopeClaims = accessKey.AccessScope.Select(accessScope => new Claim(AccessScopeKey, accessScope.ToString()));
             claimList.AddRange(accessScopeClaims);
             return claimList;
         }

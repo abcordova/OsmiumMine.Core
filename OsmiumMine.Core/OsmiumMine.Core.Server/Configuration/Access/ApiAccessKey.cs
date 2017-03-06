@@ -12,7 +12,7 @@ namespace OsmiumMine.Core.Server.Configuration.Access
     {
         // General
         [EnumMember(Value = "default")]
-        Read = 0,
+        Default = 0,
 
         [EnumMember(Value = "admin")]
         Admin = 1,
@@ -23,8 +23,8 @@ namespace OsmiumMine.Core.Server.Configuration.Access
         [JsonProperty("key")]
         public string Key { get; set; }
 
-        [JsonProperty("accessScopes")]
-        public ApiAccessScope[] AccessScopes { get; set; } = new ApiAccessScope[0];
+        [JsonProperty("accessScope")]
+        public ApiAccessScope AccessScope { get; set; } = ApiAccessScope.Default;
 
         [JsonProperty("rules")]
         public List<SecurityRule> SecurityRules { get; set; } = new List<SecurityRule>();
