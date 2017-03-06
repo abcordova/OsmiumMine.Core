@@ -22,6 +22,8 @@ namespace OsmiumMine.Core.Services.DynDatabase.Access
             var databaseId = (string)args.dbid; // database ID is required!
             var authItem = (string)query.auth;
             // Create request shell
+            // Add trailing slash
+            if (path.Length > 1 && !path.EndsWith("/", StringComparison.Ordinal)) path += "/";
             var dbRequest = new DynDatabaseRequest
             {
                 AuthToken = authItem,
