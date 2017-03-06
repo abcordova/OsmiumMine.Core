@@ -137,13 +137,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 if (ruleList == null) return HttpStatusCode.BadRequest;
                 var dbRules = ruleList;
                 // remove all rules that match the given path
-                foreach (var dbRule in dbRules)
-                {
-                    if (dbRule.PathRegex.IsMatch(path))
-                    {
-                        dbRules.Remove(dbRule);
-                    }
-                }
+                ruleList.RemoveAll(x => x.PathRegex.IsMatch(path));
                 return HttpStatusCode.OK;
             });
         }
@@ -160,16 +154,9 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
                 var dbRules = ruleList;
                 // remove all rules that match the given path
-                var removed = false;
-                foreach (var dbRule in dbRules)
-                {
-                    if (dbRule.Id == ruleId)
-                    {
-                        dbRules.Remove(dbRule);
-                        removed = true;
-                        break;
-                    }
-                }
+                var pLen = dbRules.Count;
+                dbRules.RemoveAll(x => x.Id == ruleId);
+                var removed = pLen > dbRules.Count;
                 return removed ? HttpStatusCode.OK : HttpStatusCode.NotFound;
             });
         }
@@ -185,16 +172,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
                 var ruleId = (string)Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
                 var dbRules = ruleList;
-                // remove all rules that match the given path
-                SecurityRule foundRule = null;
-                foreach (var dbRule in dbRules)
-                {
-                    if (dbRule.Id == ruleId)
-                    {
-                        foundRule = dbRule;
-                        break;
-                    }
-                }
+                var foundRule = dbRules.FirstOrDefault(x => x.Id == ruleId);
                 return foundRule != null ? Response.AsJsonNet(foundRule) : HttpStatusCode.NotFound;
             });
         }
