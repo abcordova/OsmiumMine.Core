@@ -2,8 +2,6 @@ language: csharp
 os:
   - linux
 dist: trusty
-env:
-  - CLI_VERSION=1.0.0-preview2
 addons:
   apt:
     packages:
