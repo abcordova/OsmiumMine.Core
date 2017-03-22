@@ -14,7 +14,7 @@ pushd .
 cd $DEPLOY_PROJECT/bin/Release/netcoreapp1.1/publish
 
 echo "Starting server with nohup"
-nohup dotnet PenguinUpload.dll &
+nohup dotnet $PROJECT.dll &
 
 echo "Returning"
 popd
