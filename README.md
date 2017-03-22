@@ -3,6 +3,8 @@
 
 AlphaOsmium Data Store Component
 
+[![Build Status](https://travis-ci.org/0xFireball/OsmiumMine.Core.svg?branch=master)](https://travis-ci.org/0xFireball/OsmiumMine.Core)
+
 ## Information
 
 The core component of AlphaOsmium Database, OsmiumMine is a Redis/SSDB powered schemaless data store. The provider
