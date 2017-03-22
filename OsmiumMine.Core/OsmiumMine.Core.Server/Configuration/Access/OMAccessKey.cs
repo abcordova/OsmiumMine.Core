@@ -1,27 +1,21 @@
 ﻿using Newtonsoft.Json;
 using OsmiumMine.Core.Services.Security;
+using OsmiumSubstrate.Configuration.Access;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace OsmiumMine.Core.Server.Configuration.Access
 {
     /// <summary>
     /// An enumeration of access scope identifiers, used for granular permission grants on key access
     /// </summary>
-    public enum ApiAccessScope
+    public enum OMApiAccessScope
     {
         Default,
         Admin,
     }
 
-    public class ApiAccessKey
+    public class OMAccessKey : AccessKey<OMApiAccessScope>
     {
-        [JsonProperty("key")]
-        public string Key { get; set; }
-
-        [JsonProperty("accessScope")]
-        public ApiAccessScope AccessScope { get; set; } = ApiAccessScope.Default;
-
         [JsonProperty("rules")]
         public List<SecurityRule> SecurityRules { get; set; } = new List<SecurityRule>();
 

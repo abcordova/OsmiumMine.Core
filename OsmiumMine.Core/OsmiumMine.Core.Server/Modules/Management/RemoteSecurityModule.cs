@@ -1,12 +1,12 @@
 ﻿using Nancy;
 using OsmiumMine.Core.Server.Configuration;
 using OsmiumMine.Core.Server.Configuration.Access;
-using OsmiumMine.Core.Server.Services.Authentication;
-using OsmiumMine.Core.Server.Services.Authentication.Security;
 using OsmiumMine.Core.Server.Utilities;
 using OsmiumMine.Core.Services.DynDatabase.Access;
 using OsmiumMine.Core.Services.Security;
 using OsmiumMine.Core.Utilities;
+using OsmiumSubstrate.Services.Authentication;
+using OsmiumSubstrate.Services.Authentication.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +23,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             ServerContext = serverContext;
 
-            var accessValidator = new ClientApiAccessValidator();
-            this.RequiresAllClaims(new[] { accessValidator.GetAccessClaim(ApiAccessScope.Admin) });
+            var accessValidator = new StatelessClientValidator<OMAccessKey, OMApiAccessScope>();
+            this.RequiresAllClaims(new[] { accessValidator.GetAccessClaim(OMApiAccessScope.Admin) });
 
             // Rule management (these can also manage keys)
             Post("/rules/create/{dbid?}", HandleCreateRuleRequestAsync);
@@ -57,7 +57,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             var realms = realmsParam.Split('|');
             return await Task.Run(() =>
             {
-                var key = new ApiAccessKey
+                var key = new OMAccessKey
                 {
                     AllowedRealms = realms.ToList(),
                     Key = keyid
@@ -234,7 +234,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             else if (keyid != null)
             {
                 // Get key rules
-                var authenticator = new ClientAuthenticationService(ServerContext);
+                var authenticator = new StatelessAuthenticationService<OMAccessKey, OMApiAccessScope>(ServerContext);
                 var identity = authenticator.ResolveClientIdentity(keyid);
                 if (identity == null) return null;
                 var accessKey = authenticator.ResolveKey(keyid);

@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IridiumIon.JsonFlat3", "IridiumIon.JsonFlat3\IridiumIon.JsonFlat3.csproj", "{3B12EF69-4587-43A2-9003-356E17D075AF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{69D789F3-E808-4A79-B357-8E0986DA6095}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OsmiumSubstrate", "..\lib\OsmiumSubstrate\src\OsmiumSubstrate\OsmiumSubstrate.csproj", "{DCFC5436-A99E-4842-A361-CA2866927806}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,16 +39,16 @@ Global
 		{C56495EC-1341-47BB-9544-CCCC8106101D}.Release|x86.Build.0 = Release|Any CPU
 		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x64.ActiveCfg = Debug|x64
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x64.Build.0 = Debug|x64
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x86.ActiveCfg = Debug|x86
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x86.Build.0 = Debug|x86
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x64.Build.0 = Debug|Any CPU
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Debug|x86.Build.0 = Debug|Any CPU
 		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x64.ActiveCfg = Release|x64
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x64.Build.0 = Release|x64
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x86.ActiveCfg = Release|x86
-		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x86.Build.0 = Release|x86
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x64.ActiveCfg = Release|Any CPU
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x64.Build.0 = Release|Any CPU
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x86.ActiveCfg = Release|Any CPU
+		{823AFDD9-79DE-4A2B-A184-10F98547C70C}.Release|x86.Build.0 = Release|Any CPU
 		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B12EF69-4587-43A2-9003-356E17D075AF}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -57,11 +61,24 @@ Global
 		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|x64.Build.0 = Release|Any CPU
 		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B12EF69-4587-43A2-9003-356E17D075AF}.Release|x86.Build.0 = Release|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Debug|x64.Build.0 = Debug|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Debug|x86.Build.0 = Debug|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Release|x64.ActiveCfg = Release|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Release|x64.Build.0 = Release|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Release|x86.ActiveCfg = Release|Any CPU
+		{DCFC5436-A99E-4842-A361-CA2866927806}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3B12EF69-4587-43A2-9003-356E17D075AF} = {D0BF3BEE-7FF1-435E-B3F3-978AACD99584}
+		{DCFC5436-A99E-4842-A361-CA2866927806} = {69D789F3-E808-4A79-B357-8E0986DA6095}
 	EndGlobalSection
 EndGlobal

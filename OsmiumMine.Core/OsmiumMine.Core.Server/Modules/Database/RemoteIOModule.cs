@@ -3,11 +3,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OsmiumMine.Core.Server.Configuration;
 using OsmiumMine.Core.Server.Configuration.Access;
-using OsmiumMine.Core.Server.Services.Authentication;
-using OsmiumMine.Core.Server.Services.Authentication.Security;
 using OsmiumMine.Core.Server.Utilities;
 using OsmiumMine.Core.Services.DynDatabase;
 using OsmiumMine.Core.Services.DynDatabase.Access;
+using OsmiumSubstrate.Services.Authentication;
+using OsmiumSubstrate.Services.Authentication.Security;
 using System.IO;
 using System.Threading.Tasks;
 using static OsmiumMine.Core.Services.DynDatabase.Access.DynDatabaseRequest;
@@ -185,7 +185,7 @@ namespace OsmiumMine.Core.Server.Modules.Database
             processor.AuthTokenValidator = accessRequest =>
             {
                 // get key identity
-                var authenticator = new ClientAuthenticationService(serverContext);
+                var authenticator = new StatelessAuthenticationService<OMAccessKey, OMApiAccessScope>(serverContext);
                 var identity = authenticator.ResolveClientIdentity(accessRequest.AuthToken);
                 if (identity == null) return false;
                 var accessKey = authenticator.ResolveKey(accessRequest.AuthToken);
@@ -194,8 +194,8 @@ namespace OsmiumMine.Core.Server.Modules.Database
                 // check more rules
                 if (processor.ValidateAdditionalRules(accessRequest, accessKey.SecurityRules).Granted) return true;
                 // only check admin
-                var accessValidator = new ClientApiAccessValidator();
-                if (identity.EnsureClaim(accessValidator.GetAccessClaim(ApiAccessScope.Admin)))
+                var accessValidator = new StatelessClientValidator<OMAccessKey, OMApiAccessScope>();
+                if (identity.EnsureClaim(accessValidator.GetAccessClaim(OMApiAccessScope.Admin)))
                 {
                     return true;
                 }

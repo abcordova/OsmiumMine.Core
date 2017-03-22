@@ -3,7 +3,8 @@ using Nancy.Authentication.Stateless;
 using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 using OsmiumMine.Core.Server.Configuration;
-using OsmiumMine.Core.Server.Services.Authentication;
+using OsmiumMine.Core.Server.Configuration.Access;
+using OsmiumSubstrate.Services.Authentication;
 
 namespace OsmiumMine.Core.Server
 {
@@ -19,7 +20,7 @@ namespace OsmiumMine.Core.Server
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
             OMServerContext.ConnectOsmiumMine();
-            
+
             // Enable authentication
             StatelessAuthentication.Enable(pipelines, new StatelessAuthenticationConfiguration(ctx =>
             {
@@ -27,7 +28,7 @@ namespace OsmiumMine.Core.Server
                 var apiKey = (string)ctx.Request.Query.apikey.Value;
 
                 // get user identity
-                var authenticator = new ClientAuthenticationService(OMServerContext);
+                var authenticator = new StatelessAuthenticationService<OMAccessKey, OMApiAccessScope>(OMServerContext);
                 return authenticator.ResolveClientIdentity(apiKey);
             }));
 

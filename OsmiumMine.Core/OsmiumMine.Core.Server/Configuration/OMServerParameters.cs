@@ -17,7 +17,7 @@ namespace OsmiumMine.Core.Server.Configuration
         /// Master API keys. These will also be stored in the state but will not be duplicated.
         /// </summary>
         [JsonProperty("apikeys")]
-        public ApiAccessKey[] ApiKeys { get; set; } = new ApiAccessKey[0];
+        public OMAccessKey[] ApiKeys { get; set; } = new OMAccessKey[0];
 
         [JsonProperty("corsOrigins")]
         public string[] CorsOrigins { get; set; } = new string[0];

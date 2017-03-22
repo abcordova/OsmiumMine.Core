@@ -1,4 +1,7 @@
-﻿using OsmiumMine.Core.Services.Database;
+﻿using System;
+using OsmiumMine.Core.Server.Configuration.Access;
+using OsmiumMine.Core.Services.Database;
+using OsmiumSubstrate.Configuration;
 
 namespace OsmiumMine.Core.Server.Configuration
 {
@@ -8,6 +11,8 @@ namespace OsmiumMine.Core.Server.Configuration
         public OMServerState ServerState { get; set; }
         public OsmiumMineContext OMContext { get; set; }
         public KeyValueDatabaseService KeyValueDbService { get; set; }
+
+        public ISubstrateServerState<OMAccessKey, OMApiAccessScope> SubstrateServerState => ServerState;
 
         public OMServerContext(OMServerParameters parameters)
         {
