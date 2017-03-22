@@ -1,6 +1,6 @@
 
-PROJECT = OsmiumMine.Core
-DEPLOY_PROJECT = OsmiumMine.Core/OsmiumMine.Core.Server
+PROJECT="OsmiumMine.Core"
+DEPLOY_PROJECT="OsmiumMine.Core/OsmiumMine.Core.Server"
 
 echo "$PROJECT redeploy script"
 
