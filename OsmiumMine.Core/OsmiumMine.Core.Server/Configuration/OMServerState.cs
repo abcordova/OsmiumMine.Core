@@ -11,7 +11,7 @@ namespace OsmiumMine.Core.Server.Configuration
     /// </summary>
     public class OMServerState
     {
-        public List<ApiAccessKey> ApiKeys { get; set; } = new List<ApiAccessKey>();
+        public List<OMAccessKey> ApiKeys { get; set; } = new List<OMAccessKey>();
 
         // Proxy to context
         public OMDbServiceState DbServiceState { get; set; }
