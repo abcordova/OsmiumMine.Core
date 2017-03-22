@@ -1,0 +1,3 @@
+[submodule "lib/OsmiumSubstrate"]
+	path = lib/OsmiumSubstrate
+	url = https://github.com/0xFireball/OsmiumSubstrate.git
