@@ -24,20 +24,8 @@ namespace OsmiumMine.Core.Server.Configuration
 
         public static bool DatabaseMappersRegistered { get; private set; }
 
-        public static void RegisterDatabaseMappers()
-        {
-            // Register a Regex BSONMapper
-            BsonMapper.Global.RegisterType<Regex>(
-                serialize: r => r.ToString(),
-                deserialize: d => new Regex(d.AsString)
-            );
-            DatabaseMappersRegistered = true;
-        }
-
         public static void LoadState(OMServerContext serverContext, string stateStorageFile)
         {
-            // Register mappers
-            if (!DatabaseMappersRegistered) RegisterDatabaseMappers();
             // Load the Server State into the context. This object also includes the OsmiumMine Core state
             var database = new LiteDatabase(stateStorageFile);
             var stateStorage = database.GetCollection<OMServerState>(StateStorageKey);
@@ -58,6 +46,11 @@ namespace OsmiumMine.Core.Server.Configuration
                 // Update in database
                 stateStorage.Upsert(savedState);
             };
+            // Apply key reset
+            if (serverContext.Parameters.KeyReset)
+            {
+                savedState.ApiKeys.Clear();
+            }
             // Merge the API keys
             foreach (var paramKey in serverContext.Parameters.ApiKeys)
             {
