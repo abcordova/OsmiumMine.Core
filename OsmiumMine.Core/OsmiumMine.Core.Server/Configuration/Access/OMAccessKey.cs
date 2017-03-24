@@ -21,5 +21,8 @@ namespace OsmiumMine.Core.Server.Configuration.Access
 
         [JsonProperty("realms")]
         public List<string> AllowedRealms { get; set; } = new List<string>();
+
+        [JsonProperty("scopes")]
+        public override OMApiAccessScope[] AccessScopes { get; set; } = new[] { OMApiAccessScope.Default };
     }
 }
