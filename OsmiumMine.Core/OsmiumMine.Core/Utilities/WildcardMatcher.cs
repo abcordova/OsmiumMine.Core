@@ -14,9 +14,9 @@ namespace OsmiumMine.Core.Utilities
         public static string ToRegex(string pattern)
         {
             return "^" + Regex.Escape(pattern)
-                              .Replace(@"\*", ".*")
-                              .Replace(@"\?", ".")
-                       + "$";
+                       .Replace(@"\*", ".*")
+                       .Replace(@"\?", ".")
+                   + "$";
         }
     }
 }

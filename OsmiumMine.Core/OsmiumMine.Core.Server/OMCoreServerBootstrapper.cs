@@ -10,12 +10,12 @@ namespace OsmiumMine.Core.Server
 {
     public class OMCoreServerBootstrapper : DefaultNancyBootstrapper
     {
-        public OMServerContext OMServerContext { get; set; }
-
         public OMCoreServerBootstrapper(OMServerContext serverContext)
         {
             OMServerContext = serverContext;
         }
+
+        public OMServerContext OMServerContext { get; set; }
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
@@ -25,7 +25,7 @@ namespace OsmiumMine.Core.Server
             StatelessAuthentication.Enable(pipelines, new StatelessAuthenticationConfiguration(ctx =>
             {
                 // Take API from query string
-                var apiKey = (string)ctx.Request.Query.apikey.Value;
+                var apiKey = (string) ctx.Request.Query.apikey.Value;
 
                 // get user identity
                 var authenticator = new StatelessAuthenticationService<OMAccessKey, OMApiAccessScope>(OMServerContext);
@@ -33,12 +33,10 @@ namespace OsmiumMine.Core.Server
             }));
 
             // Enable CORS
-            pipelines.AfterRequest.AddItemToEndOfPipeline((ctx) =>
+            pipelines.AfterRequest.AddItemToEndOfPipeline(ctx =>
             {
                 foreach (var origin in OMServerContext.Parameters.CorsOrigins)
-                {
                     ctx.Response.WithHeader("Access-Control-Allow-Origin", origin);
-                }
                 ctx.Response
                     .WithHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE")
                     .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");

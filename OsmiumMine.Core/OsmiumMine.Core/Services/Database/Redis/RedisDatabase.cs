@@ -1,18 +1,24 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using StackExchange.Redis;
 
 namespace OsmiumMine.Core.Services.Database.Redis
 {
     public class RedisDatabase : IKeyValueDatabase, IDisposable
     {
-        private ConnectionMultiplexer _redis;
-        private IDatabase _rdb => _redis.GetDatabase();
+        private readonly ConnectionMultiplexer _redis;
 
-        public RedisDatabase(StackExchange.Redis.ConfigurationOptions connectionConfig)
+        public RedisDatabase(ConfigurationOptions connectionConfig)
         {
             _redis = ConnectionMultiplexer.Connect(connectionConfig);
+        }
+
+        private IDatabase _rdb => _redis.GetDatabase();
+
+        public void Dispose()
+        {
+            _redis.Close();
         }
 
         public bool Exists(string key)
@@ -38,11 +44,6 @@ namespace OsmiumMine.Core.Services.Database.Redis
         public bool Set(string domain, string key, string value)
         {
             return _rdb.HashSet(domain, key, value);
-        }
-
-        public void Dispose()
-        {
-            _redis.Close();
         }
 
         public string[] GetKeys(string domain)

@@ -1,21 +1,16 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 
 namespace IridiumIon.JsonFlat3.Internal
 {
     /// <summary>
-    /// Based on https://codedump.io/share/w4CmxtkbwSGD/1/how-to-unflatten-flattened-json-in-c
+    ///     Based on https://codedump.io/share/w4CmxtkbwSGD/1/how-to-unflatten-flattened-json-in-c
     /// </summary>
     internal class JsonUnflattenerHelper
     {
-        private enum JsonKind
-        {
-            Object, Array
-        }
-
         public static JObject UnflattenJObject(Dictionary<string, string> flattenedObj, bool shallow = false)
         {
             JContainer result = new JObject();
@@ -24,7 +19,6 @@ namespace IridiumIon.JsonFlat3.Internal
                 MergeArrayHandling = MergeArrayHandling.Merge
             };
             foreach (var pathValue in flattenedObj)
-            {
                 if (shallow)
                 {
                     //result.Merge(UnflattenSingle(
@@ -37,14 +31,13 @@ namespace IridiumIon.JsonFlat3.Internal
                 {
                     result.Merge(UnflattenSingle(pathValue), settings);
                 }
-            }
             return result as JObject;
         }
 
         private static JContainer UnflattenSingle(KeyValuePair<string, string> keyValue)
         {
             // Get key
-            string path = keyValue.Key;
+            var path = keyValue.Key;
             // Get value
             var rawValue = keyValue.Value;
             var pathSegments = SplitPathSegments(path);
@@ -64,21 +57,13 @@ namespace IridiumIon.JsonFlat3.Internal
                             int intVal;
                             double doubleVal;
                             if (bool.TryParse(rawValue, out boolVal))
-                            {
                                 obj.Add(pathSegment, new JValue(boolVal));
-                            }
                             if (int.TryParse(rawValue, out intVal))
-                            {
                                 obj.Add(pathSegment, new JValue(intVal));
-                            }
                             else if (double.TryParse(rawValue, out doubleVal))
-                            {
                                 obj.Add(pathSegment, new JValue(doubleVal));
-                            }
                             else
-                            {
                                 obj.Add(pathSegment, new JValue(rawValue));
-                            }
                         }
                         else
                         {
@@ -97,21 +82,13 @@ namespace IridiumIon.JsonFlat3.Internal
                             int intVal;
                             double doubleVal;
                             if (bool.TryParse(rawValue, out boolVal))
-                            {
                                 array[index] = new JValue(boolVal);
-                            }
                             if (int.TryParse(rawValue, out intVal))
-                            {
                                 array[index] = new JValue(intVal);
-                            }
                             else if (double.TryParse(rawValue, out doubleVal))
-                            {
                                 array[index] = new JValue(doubleVal);
-                            }
                             else
-                            {
                                 array[index] = new JValue(rawValue);
-                            }
                         }
                         else
                         {
@@ -129,18 +106,14 @@ namespace IridiumIon.JsonFlat3.Internal
             var result = new List<string>();
             var reg = new Regex(@"(?!\.)([^. ^\[\]]+)|(?!\[)(\d+)(?=\])");
             foreach (Match match in reg.Matches(path))
-            {
                 result.Add(match.Value);
-            }
             return result;
         }
 
         private static JArray FillEmpty(JArray array, int index)
         {
-            for (int i = 0; i <= index; i++)
-            {
+            for (var i = 0; i <= index; i++)
                 array.Add(null);
-            }
             return array;
         }
 
@@ -154,10 +127,14 @@ namespace IridiumIon.JsonFlat3.Internal
         {
             int result;
             if (int.TryParse(pathSegment, out result))
-            {
                 return result;
-            }
             throw new FormatException("Unable to parse array index: " + pathSegment);
+        }
+
+        private enum JsonKind
+        {
+            Object,
+            Array
         }
     }
 }

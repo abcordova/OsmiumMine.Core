@@ -13,7 +13,7 @@ namespace OsmiumMine.Core.Server.Handlers
         public bool HandlesStatusCode(HttpStatusCode statusCode, NancyContext context)
         {
             return statusCode == HttpStatusCode.NotFound
-                || statusCode == HttpStatusCode.NotImplemented;
+                   || statusCode == HttpStatusCode.NotImplemented;
         }
     }
 }

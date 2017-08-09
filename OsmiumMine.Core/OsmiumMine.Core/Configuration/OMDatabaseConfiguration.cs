@@ -3,7 +3,7 @@
 namespace OsmiumMine.Core.Configuration
 {
     /// <summary>
-    /// Configuration for interacting with the database
+    ///     Configuration for interacting with the database
     /// </summary>
     public class OMDatabaseConfiguration
     {
@@ -12,6 +12,7 @@ namespace OsmiumMine.Core.Configuration
             Redis,
             SSDB
         }
+
         public int RedisPort { get; set; } = 6379;
         public string RedisAddress { get; set; } = IPAddress.Loopback.MapToIPv4().ToString();
         public string RedisPrefix { get; set; } = "osmiummine.";

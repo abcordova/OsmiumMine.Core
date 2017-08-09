@@ -1,12 +1,15 @@
-﻿using LiteDB;
+﻿using System.Linq;
+using LiteDB;
 using OsmiumMine.Core.Configuration;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace OsmiumMine.Core.Server.Configuration
 {
     public static class OMServerConfigurator
     {
+        public const string StateStorageKey = "state";
+
+        public static bool DatabaseMappersRegistered { get; private set; }
+
         public static OMServerContext CreateContext(OMServerParameters parameters)
         {
             // Load the configuration
@@ -19,10 +22,6 @@ namespace OsmiumMine.Core.Server.Configuration
             };
             return config;
         }
-
-        public const string StateStorageKey = "state";
-
-        public static bool DatabaseMappersRegistered { get; private set; }
 
         public static void LoadState(OMServerContext serverContext, string stateStorageFile)
         {
@@ -48,9 +47,7 @@ namespace OsmiumMine.Core.Server.Configuration
             };
             // Apply key reset
             if (serverContext.Parameters.KeyReset)
-            {
                 savedState.ApiKeys.Clear();
-            }
             // Merge the API keys
             foreach (var paramKey in serverContext.Parameters.ApiKeys)
             {

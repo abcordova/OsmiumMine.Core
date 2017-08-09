@@ -1,30 +1,25 @@
-﻿using LiteDB;
+﻿using System;
+using System.Collections.Generic;
+using LiteDB;
 using OsmiumMine.Core.Configuration;
 using OsmiumMine.Core.Server.Configuration.Access;
 using OsmiumSubstrate.Configuration;
-using System;
-using System.Collections.Generic;
-using OsmiumSubstrate.Configuration.Access;
-using System.Linq;
 
 namespace OsmiumMine.Core.Server.Configuration
 {
     /// <summary>
-    /// Persisted state for the server
+    ///     Persisted state for the server
     /// </summary>
     public class OMServerState : ISubstrateServerState<OMAccessKey, OMApiAccessScope>
     {
         public List<OMAccessKey> ApiKeys { get; set; } = new List<OMAccessKey>();
-
-        [BsonIgnore]
-        IEnumerable<OMAccessKey> ISubstrateServerState<OMAccessKey, OMApiAccessScope>.ApiKeys => ApiKeys;
 
 
         // Proxy to context
         public OMDbServiceState DbServiceState { get; set; }
 
         /// <summary>
-        /// BsonDocument ID
+        ///     BsonDocument ID
         /// </summary>
         [BsonId]
         public ObjectId DatabaseId { get; set; }
@@ -34,5 +29,8 @@ namespace OsmiumMine.Core.Server.Configuration
 
         [BsonIgnore]
         public Action Persist { get; set; }
+
+        [BsonIgnore]
+        IEnumerable<OMAccessKey> ISubstrateServerState<OMAccessKey, OMApiAccessScope>.ApiKeys => ApiKeys;
     }
 }

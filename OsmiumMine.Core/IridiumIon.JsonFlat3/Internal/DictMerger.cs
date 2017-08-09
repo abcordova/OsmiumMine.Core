@@ -5,8 +5,8 @@ namespace IridiumIon.JsonFlat3.Internal
     internal static class DictMerger
     {
         /// <summary>
-        /// Merge some dictionaries, overwriting contents. Later dictionaries have higher priority and will overwrite entries
-        /// in earlier dictionaries.
+        ///     Merge some dictionaries, overwriting contents. Later dictionaries have higher priority and will overwrite entries
+        ///     in earlier dictionaries.
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
@@ -20,7 +20,7 @@ namespace IridiumIon.JsonFlat3.Internal
         }
 
         /// <summary>
-        /// Merge dictionaries into a dictionary. Later dictionaries will overwite earlier entries.
+        ///     Merge dictionaries into a dictionary. Later dictionaries will overwite earlier entries.
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
@@ -29,21 +29,11 @@ namespace IridiumIon.JsonFlat3.Internal
         public static void MergeInto<T1, T2>(this Dictionary<T1, T2> currentDict, params Dictionary<T1, T2>[] dicts)
         {
             foreach (var dict in dicts)
-            {
-                foreach (var kvp in dict)
-                {
-                    if (!currentDict.ContainsKey(kvp.Key))
-                    {
-                        // Doesn't exist yet
-                        currentDict.Add(kvp.Key, kvp.Value);
-                    }
-                    else
-                    {
-                        // Overwrite
-                        currentDict[kvp.Key] = kvp.Value;
-                    }
-                }
-            }
+            foreach (var kvp in dict)
+                if (!currentDict.ContainsKey(kvp.Key))
+                    currentDict.Add(kvp.Key, kvp.Value);
+                else
+                    currentDict[kvp.Key] = kvp.Value;
         }
     }
 }

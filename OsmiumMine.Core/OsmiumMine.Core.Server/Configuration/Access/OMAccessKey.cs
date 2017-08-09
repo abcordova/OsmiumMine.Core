@@ -1,17 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using OsmiumMine.Core.Services.Security;
 using OsmiumSubstrate.Configuration.Access;
-using System.Collections.Generic;
 
 namespace OsmiumMine.Core.Server.Configuration.Access
 {
     /// <summary>
-    /// An enumeration of access scope identifiers, used for granular permission grants on key access
+    ///     An enumeration of access scope identifiers, used for granular permission grants on key access
     /// </summary>
     public enum OMApiAccessScope
     {
         Default,
-        Admin,
+        Admin
     }
 
     public class OMAccessKey : AccessKey<OMApiAccessScope>
@@ -23,6 +23,6 @@ namespace OsmiumMine.Core.Server.Configuration.Access
         public List<string> AllowedRealms { get; set; } = new List<string>();
 
         [JsonProperty("scopes")]
-        public override OMApiAccessScope[] AccessScopes { get; set; } = new[] { OMApiAccessScope.Default };
+        public override OMApiAccessScope[] AccessScopes { get; set; } = {OMApiAccessScope.Default};
     }
 }

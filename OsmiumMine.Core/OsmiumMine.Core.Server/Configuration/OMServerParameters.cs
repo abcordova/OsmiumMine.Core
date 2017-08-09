@@ -5,8 +5,8 @@ using OsmiumMine.Core.Server.Configuration.Access;
 namespace OsmiumMine.Core.Server.Configuration
 {
     /// <summary>
-    /// Parameter model used to set up OMCoreServerConfiguration.
-    /// These parameters are used for initializing the server and connecting to the database.
+    ///     Parameter model used to set up OMCoreServerConfiguration.
+    ///     These parameters are used for initializing the server and connecting to the database.
     /// </summary>
     public class OMServerParameters
     {
@@ -15,12 +15,12 @@ namespace OsmiumMine.Core.Server.Configuration
 
 
         /// <summary>
-        /// If set to true, the keys will be reset upon a server start.
+        ///     If set to true, the keys will be reset upon a server start.
         /// </summary>
         public bool KeyReset { get; set; } = false;
 
         /// <summary>
-        /// Master API keys. These will also be stored in the state but will not be duplicated.
+        ///     Master API keys. These will also be stored in the state but will not be duplicated.
         /// </summary>
         [JsonProperty("apikeys")]
         public OMAccessKey[] ApiKeys { get; set; } = new OMAccessKey[0];

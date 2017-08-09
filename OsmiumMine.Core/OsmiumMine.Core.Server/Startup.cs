@@ -6,8 +6,6 @@ using Microsoft.Extensions.Logging;
 using Nancy.Owin;
 using OsmiumMine.Core.Configuration;
 using OsmiumMine.Core.Server.Configuration;
-using System.IO;
-using System;
 
 namespace OsmiumMine.Core.Server
 {
@@ -16,18 +14,18 @@ namespace OsmiumMine.Core.Server
         public const string ServerParametersConfigurationFileName = "omserver.json";
         public const string ServerStateStorageFileName = "omserver_state.lidb";
 
-        private readonly IConfigurationRoot config;
-        private OMServerContext serverContext;
+        private readonly IConfigurationRoot _config;
+        private OMServerContext _serverContext;
 
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                              .AddJsonFile(ServerParametersConfigurationFileName,
-                                optional: true,
-                                reloadOnChange: true)
-                              .SetBasePath(env.ContentRootPath);
+                .AddJsonFile(ServerParametersConfigurationFileName,
+                    true,
+                    true)
+                .SetBasePath(env.ContentRootPath);
 
-            config = builder.Build();
+            _config = builder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -35,18 +33,17 @@ namespace OsmiumMine.Core.Server
             // Adds services required for using options.
             services.AddOptions();
             // Register IConfiguration
-            services.Configure<OMServerParameters>(config);
+            services.Configure<OMServerParameters>(_config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            IApplicationLifetime applicationLifetime)
         {
             loggerFactory.AddConsole();
 
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             // Create default server parameters
             var serverParameters = new OMServerParameters
@@ -54,22 +51,22 @@ namespace OsmiumMine.Core.Server
                 OMConfig = new OMDatabaseConfiguration()
             };
             // Bind configuration file data to server parameters
-            config.Bind(serverParameters);
+            _config.Bind(serverParameters);
             // Create a server context from the parameters
-            serverContext = OMServerConfigurator.CreateContext(serverParameters);
+            _serverContext = OMServerConfigurator.CreateContext(serverParameters);
             // Load persistent state data
-            OMServerConfigurator.LoadState(serverContext, ServerStateStorageFileName);
+            OMServerConfigurator.LoadState(_serverContext, ServerStateStorageFileName);
 
             // Register shutdown
             applicationLifetime.ApplicationStopping.Register(OnShutdown);
 
-            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OMCoreServerBootstrapper(serverContext)));
+            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new OMCoreServerBootstrapper(_serverContext)));
         }
 
         private void OnShutdown()
         {
             // Persist server state
-            serverContext.ServerState.Persist();
+            _serverContext.ServerState.Persist();
         }
     }
 }

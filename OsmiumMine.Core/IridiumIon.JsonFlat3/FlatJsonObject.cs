@@ -1,17 +1,15 @@
-﻿using IridiumIon.JsonFlat3.Internal;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using IridiumIon.JsonFlat3.Internal;
+using Newtonsoft.Json.Linq;
 
 namespace IridiumIon.JsonFlat3
 {
     /// <summary>
-    /// An abstraction representing a flattened JSON object
+    ///     An abstraction representing a flattened JSON object
     /// </summary>
     public class FlatJsonObject
     {
-        public Dictionary<string, string> Dictionary { get; }
-
         public FlatJsonObject() : this(new JObject())
         {
         }
@@ -25,6 +23,8 @@ namespace IridiumIon.JsonFlat3
         {
             Dictionary = flattenedDict;
         }
+
+        public Dictionary<string, string> Dictionary { get; }
 
         public void Merge(params FlatJsonObject[] other)
         {

@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
+using Newtonsoft.Json.Linq;
 
 namespace OsmiumMine.Core.Services.DynDatabase
 {
     /// <summary>
-    /// Provides implementations for server values
+    ///     Provides implementations for server values
     /// </summary>
     public static class ServerValueProvider
     {
@@ -18,9 +18,9 @@ namespace OsmiumMine.Core.Services.DynDatabase
                     return new JValue(DateTimeOffset.Now.ToUnixTimeSeconds());
 
                 default:
-                    {
-                        return JValue.CreateNull();
-                    }
+                {
+                    return JValue.CreateNull();
+                }
             }
         }
     }

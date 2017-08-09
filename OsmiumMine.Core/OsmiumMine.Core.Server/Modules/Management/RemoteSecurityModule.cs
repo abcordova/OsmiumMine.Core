@@ -1,4 +1,9 @@
-﻿using Nancy;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Nancy;
 using OsmiumMine.Core.Server.Configuration;
 using OsmiumMine.Core.Server.Configuration.Access;
 using OsmiumMine.Core.Server.Utilities;
@@ -7,24 +12,17 @@ using OsmiumMine.Core.Services.Security;
 using OsmiumMine.Core.Utilities;
 using OsmiumSubstrate.Services.Authentication;
 using OsmiumSubstrate.Services.Authentication.Security;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace OsmiumMine.Core.Server.Modules.Management
 {
     public class RemoteSecurityModule : OsmiumMineServerModule
     {
-        public IOMServerContext ServerContext { get; set; }
-
         public RemoteSecurityModule(IOMServerContext serverContext) : base("/rsec")
         {
             ServerContext = serverContext;
 
             var accessValidator = new StatelessClientValidator<OMAccessKey, OMApiAccessScope>();
-            this.RequiresAllClaims(new[] { accessValidator.GetAccessClaim(OMApiAccessScope.Admin) });
+            this.RequiresAllClaims(new[] {accessValidator.GetAccessClaim(OMApiAccessScope.Admin)});
 
             // Rule management (these can also manage keys)
             Post("/rules/create/{dbid?}", HandleCreateRuleRequestAsync);
@@ -42,17 +40,17 @@ namespace OsmiumMine.Core.Server.Modules.Management
             After += ctx =>
             {
                 if (ctx.Response.StatusCode == HttpStatusCode.OK)
-                {
                     ServerContext.ServerState.Persist();
-                }
             };
         }
+
+        public IOMServerContext ServerContext { get; set; }
 
         private async Task<Response> HandleCreateKeyRequestAsync(dynamic args)
         {
             // Parameters:
-            var keyid = ((string)args.keyid);
-            var realmsParam = ((string)Request.Query.realms);
+            var keyid = (string) args.keyid;
+            var realmsParam = (string) Request.Query.realms;
             if (realmsParam == null) return HttpStatusCode.BadRequest;
             var realms = realmsParam.Split('|');
             return await Task.Run(() =>
@@ -75,7 +73,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                var keyid = ((string)args.keyid);
+                var keyid = (string) args.keyid;
                 var key = ServerContext.ServerState.ApiKeys.FirstOrDefault(x => x.Key == keyid);
                 if (key == null) return HttpStatusCode.NotFound;
                 return Response.AsJsonNet(key);
@@ -86,7 +84,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                var keyid = ((string)args.keyid);
+                var keyid = (string) args.keyid;
                 var key = ServerContext.ServerState.ApiKeys.FirstOrDefault(x => x.Key == keyid);
                 if (key == null) return HttpStatusCode.NotFound;
                 lock (ServerContext.ServerState.ApiKeys)
@@ -97,12 +95,13 @@ namespace OsmiumMine.Core.Server.Modules.Management
             });
         }
 
-        private static (string, string, string) ParseRulesRequestArgs(dynamic args, Request request, bool parsePathPattern = true)
+        private static (string, string, string) ParseRulesRequestArgs(dynamic args, Request request,
+            bool parsePathPattern = true)
         {
-            var dbid = (string)args.dbid;
-            var path = (string)request.Query.path;
-            var keyid = ((string)request.Query.keyid);
-            var wc = (string)request.Query.wc == "1"; // whether to parse as a wildcard
+            var dbid = (string) args.dbid;
+            var path = (string) request.Query.path;
+            var keyid = (string) request.Query.keyid;
+            var wc = (string) request.Query.wc == "1"; // whether to parse as a wildcard
             if (string.IsNullOrWhiteSpace(dbid)) dbid = null;
             if (string.IsNullOrWhiteSpace(path)) path = parsePathPattern ? WildcardMatcher.ToRegex("/*") : "/";
             if (wc)
@@ -113,7 +112,6 @@ namespace OsmiumMine.Core.Server.Modules.Management
             else
             {
                 if (parsePathPattern)
-                {
                     try
                     {
                         Regex.IsMatch("", path);
@@ -123,7 +121,6 @@ namespace OsmiumMine.Core.Server.Modules.Management
                         // Path regex was invalid, parse as wildcard
                         path = WildcardMatcher.ToRegex(path);
                     }
-                }
             }
             return (dbid, path, keyid);
         }
@@ -132,7 +129,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path, string keyid) =
+                    ParseRulesRequestArgs((DynamicDictionary) args, Request, false);
                 var ruleList = GetCurrentRuleList(dbid, keyid);
                 if (ruleList == null) return HttpStatusCode.BadRequest;
                 var dbRules = ruleList;
@@ -147,10 +145,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             return await Task.Run(() =>
             {
                 // Path is not necessary for this operation
-                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path, string keyid) =
+                    ParseRulesRequestArgs((DynamicDictionary) args, Request, false);
                 var ruleList = GetCurrentRuleList(dbid, keyid);
                 if (ruleList == null) return HttpStatusCode.BadRequest;
-                var ruleId = (string)Request.Query.id;
+                var ruleId = (string) Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
                 var dbRules = ruleList;
                 // remove all rules that match the given path
@@ -166,10 +165,11 @@ namespace OsmiumMine.Core.Server.Modules.Management
             return await Task.Run(() =>
             {
                 // Path is not necessary for this operation
-                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path, string keyid) =
+                    ParseRulesRequestArgs((DynamicDictionary) args, Request, false);
                 var ruleList = GetCurrentRuleList(dbid, keyid);
                 if (ruleList == null) return HttpStatusCode.BadRequest;
-                var ruleId = (string)Request.Query.id;
+                var ruleId = (string) Request.Query.id;
                 if (string.IsNullOrWhiteSpace(ruleId)) return HttpStatusCode.BadRequest;
                 var dbRules = ruleList;
                 var foundRule = dbRules.FirstOrDefault(x => x.Id == ruleId);
@@ -181,7 +181,8 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request, false);
+                (string dbid, string path, string keyid) =
+                    ParseRulesRequestArgs((DynamicDictionary) args, Request, false);
                 var ruleList = GetCurrentRuleList(dbid, keyid);
                 if (ruleList == null) return HttpStatusCode.BadRequest;
 
@@ -194,20 +195,19 @@ namespace OsmiumMine.Core.Server.Modules.Management
         {
             return await Task.Run(() =>
             {
-                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary)args, Request);
+                (string dbid, string path, string keyid) = ParseRulesRequestArgs((DynamicDictionary) args, Request);
                 var ruleList = GetCurrentRuleList(dbid, keyid);
                 if (ruleList == null) return HttpStatusCode.BadRequest;
-                var allowRule = (string)Request.Query.allow == "1"; // whether the rule should set allow to true
-                int priority = -1;
-                int.TryParse((string)Request.Query.priority, out priority);
+                var allowRule = (string) Request.Query.allow == "1"; // whether the rule should set allow to true
+                var priority = -1;
+                int.TryParse((string) Request.Query.priority, out priority);
                 DatabaseAction ruleFlags = 0;
                 try
                 {
-                    var ruleTypes = ((string)Request.Query.type).Split('|').Select(x => (DatabaseAction)Enum.Parse(typeof(DatabaseAction), x));
+                    var ruleTypes = ((string) Request.Query.type).Split('|')
+                        .Select(x => (DatabaseAction) Enum.Parse(typeof(DatabaseAction), x));
                     foreach (var ruleType in ruleTypes)
-                    {
                         ruleFlags |= ruleType;
-                    }
                 }
                 catch
                 {
@@ -226,9 +226,7 @@ namespace OsmiumMine.Core.Server.Modules.Management
             {
                 // Get database rules
                 if (!ServerContext.OMContext.DbServiceState.SecurityRuleTable.ContainsKey(dbid))
-                {
                     ServerContext.OMContext.DbServiceState.SecurityRuleTable.Add(dbid, new List<SecurityRule>());
-                }
                 ruleList = ServerContext.OMContext.DbServiceState.SecurityRuleTable[dbid];
             }
             else if (keyid != null)

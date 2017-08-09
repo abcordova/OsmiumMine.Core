@@ -6,12 +6,12 @@ namespace IridiumIon.JsonFlat3
 {
     public class FlatJsonPath
     {
-        public IList<string> Segments { get; }
-
         public FlatJsonPath(string uriPath)
         {
-            Segments = uriPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            Segments = uriPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
+
+        public IList<string> Segments { get; }
 
         public string TokenPath
         {
